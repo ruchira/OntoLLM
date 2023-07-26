@@ -13,10 +13,10 @@ from oaklib.datamodels.search_datamodel import SearchProperty
 from oaklib.interfaces import SearchInterface
 from pydantic import BaseModel
 
-from ontogpt.clients.pubmed_client import PubmedClient
-from ontogpt.engines.spires_engine import SPIRESEngine
-from ontogpt.evaluation.evaluation_engine import SimilarityScore, SPIRESEvaluationEngine
-from ontogpt.templates.mendelian_disease import MendelianDisease
+from ontollm.clients.pubmed_client import PubmedClient
+from ontollm.engines.spires_engine import SPIRESEngine
+from ontollm.evaluation.evaluation_engine import SimilarityScore, SPIRESEvaluationEngine
+from ontollm.templates.mendelian_disease import MendelianDisease
 
 THIS_DIR = Path(__file__).parent
 DATABASE_DIR = Path(__file__).parent / "database"

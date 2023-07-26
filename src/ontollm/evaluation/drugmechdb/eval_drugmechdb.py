@@ -15,10 +15,10 @@ import yaml
 from oaklib import get_implementation_from_shorthand
 from pydantic import BaseModel
 
-import ontogpt.evaluation.drugmechdb.datamodel.drugmechdb as source_datamodel
-import ontogpt.templates.drug as target_datamodel
-from ontogpt.engines.spires_engine import SPIRESEngine
-from ontogpt.evaluation.evaluation_engine import SimilarityScore, SPIRESEvaluationEngine
+import ontollm.evaluation.drugmechdb.datamodel.drugmechdb as source_datamodel
+import ontollm.templates.drug as target_datamodel
+from ontollm.engines.spires_engine import SPIRESEngine
+from ontollm.evaluation.evaluation_engine import SimilarityScore, SPIRESEvaluationEngine
 
 THIS_DIR = Path(__file__).parent
 DATABASE_DIR = Path(__file__).parent / "database"

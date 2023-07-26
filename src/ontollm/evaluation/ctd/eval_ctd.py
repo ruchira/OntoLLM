@@ -29,11 +29,11 @@ from bioc import biocxml
 from oaklib import BasicOntologyInterface, get_implementation_from_shorthand
 from pydantic import BaseModel
 
-from ontogpt.engines.knowledge_engine import chunk_text
-from ontogpt.engines.spires_engine import SPIRESEngine
-from ontogpt.evaluation.evaluation_engine import SimilarityScore, SPIRESEvaluationEngine
-from ontogpt.templates.core import Publication, Triple
-from ontogpt.templates.ctd import (
+from ontollm.engines.knowledge_engine import chunk_text
+from ontollm.engines.spires_engine import SPIRESEngine
+from ontollm.evaluation.evaluation_engine import SimilarityScore, SPIRESEvaluationEngine
+from ontollm.templates.core import Publication, Triple
+from ontollm.templates.ctd import (
     ChemicalToDiseaseDocument,
     ChemicalToDiseaseRelationship,
     TextWithTriples,

@@ -23,13 +23,13 @@ from oaklib.parsers.association_parser_factory import get_association_parser
 from pydantic import BaseModel
 from tiktoken import Encoding
 
-from ontogpt.engines import create_engine
-from ontogpt.engines.enrichment import ENTITY_ID, EnrichmentEngine, EnrichmentPayload
-from ontogpt.engines.knowledge_engine import MODEL_NAME
-from ontogpt import MODELS
-from ontogpt.evaluation.evaluation_engine import EvaluationEngine
-from ontogpt.templates.class_enrichment import ClassEnrichmentResult
-from ontogpt.utils.gene_set_utils import SYMBOL, GeneSet, drop_genes_from_gene_set, gene_info
+from ontollm.engines import create_engine
+from ontollm.engines.enrichment import ENTITY_ID, EnrichmentEngine, EnrichmentPayload
+from ontollm.engines.knowledge_engine import MODEL_NAME
+from ontollm import MODELS
+from ontollm.evaluation.evaluation_engine import EvaluationEngine
+from ontollm.templates.class_enrichment import ClassEnrichmentResult
+from ontollm.utils.gene_set_utils import SYMBOL, GeneSet, drop_genes_from_gene_set, gene_info
 
 THIS_DIR = Path(__file__).parent
 DATABASE_DIR = Path(__file__).parent / "database"
@@ -140,7 +140,7 @@ class EvalEnrichment(EvaluationEngine):
         return comparisons
 
     def compare_analysis(self, gene_set: GeneSet, **kwargs) -> GeneSetComparison:
-        """Compare OntoGPT enrichment vs standard."""
+        """Compare OntoLLM enrichment vs standard."""
         payloads = {}
         logger.info(f"Gene symbols: {gene_set.gene_symbols}")
         for modelname in ENRICHMENT_MODELS:
