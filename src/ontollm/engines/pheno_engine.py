@@ -11,9 +11,9 @@ from oaklib.datamodels.text_annotator import TextAnnotationConfiguration
 from oaklib.interfaces import MappingProviderInterface, TextAnnotatorInterface
 from pydantic import BaseModel
 
-from ontogpt.engines.knowledge_engine import KnowledgeEngine
-from ontogpt.io.yaml_wrapper import dump_minimal_yaml
-from ontogpt.prompts.phenopacket import DEFAULT_PHENOPACKET_PROMPT
+from ontollm.engines.knowledge_engine import KnowledgeEngine
+from ontollm.io.yaml_wrapper import dump_minimal_yaml
+from ontollm.prompts.phenopacket import DEFAULT_PHENOPACKET_PROMPT
 
 logger = logging.getLogger(__name__)
 
