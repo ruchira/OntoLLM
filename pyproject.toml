@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "ontogpt"
+name = "ontollm"
 version = "0.2.10"
-description = "OntoGPT"
+description = "OntoLLM"
 authors = ["Chris Mungall <cjmungall@lbl.gov>"]
 license = "BSD-3"
 readme = "README.md"
@@ -43,9 +43,11 @@ cachier = ">=2.1.0"
 wikipedia-api = ">=0.5.8"
 pystow = "^0.5.0"
 langchain = ">=0.0.229"
+#TODO Remove dependency on gpt4all
 gpt4all = {version = ">=0.3.5", extras = ["gpt4all"], optional = true}
 requests-cache = ">=1.0.1"
 streamlit = ">=1.22.0"
+#TODO Remove dependency on gpt4
 gpt4 = ">=0.0.1"
 "ruamel.yaml" = ">=0.17.31"
 requests = "^2.31.0"
@@ -58,8 +60,8 @@ tox = ">=3.25.1"
 mkdocs-mermaid2-plugin = ">=0.6.0"
 
 [tool.poetry.scripts]
-ontogpt = "ontogpt.cli:main"
-web-ontogpt = "ontogpt.webapp.main:start"
+ontollm = "ontollm.cli:main"
+web-ontollm = "ontollm.webapp.main:start"
 
 [tool.poetry.extras]
 docs = [
@@ -77,6 +79,7 @@ web = [
 recipes = [
     "recipe-scrapers"
 ]
+#TOTO Remove dependency on gpt4
 gpt4all = [
     "gpt4all"
 ]

@@ -1,7 +1,7 @@
 RUN = poetry run
 # NOTE: we are currently pinned to an earlier linkml because pydantic...
 TMPRUN = 
-PACKAGE = ontogpt
+PACKAGE = ontollm
 TEMPLATE_DIR = src/$(PACKAGE)/templates
 EVAL_DIR = src/$(PACKAGE)/evaluation
 TEMPLATES = $(notdir $(basename $(wildcard $(TEMPLATE_DIR)/*.yaml)))
@@ -25,7 +25,7 @@ integration-test:
 	$(RUN) python -m unittest
 
 get_version:
-	$(RUN) python -c "import ontogpt;print('.'.join((ontogpt.__version__).split('.', 3)[:3]))"
+	$(RUN) python -c "import ontollm;print('.'.join((ontollm.__version__).split('.', 3)[:3]))"
 
 $(TEMPLATE_DIR)/%.py: src/$(PACKAGE)/templates/%.yaml
 	$(RUN) gen-pydantic $< > $@.tmp && mv $@.tmp $@
@@ -35,7 +35,7 @@ $(TEMPLATE_DIR)/%.py: src/$(PACKAGE)/templates/%.yaml
 
 #all_images: $(patsubst %, docs/images/%.png, $(ENTRY_CLASSES))
 #docs/images/%.png:
-#	$(RUN) erdantic ontogpt.templates.$* -o $@
+#	$(RUN) erdantic ontollm.templates.$* -o $@
 
 projects/%: src/$(PACKAGE)/templates/%.yaml
 	$(RUN) gen-project $< -d $@ && cp -pr $@/docs docs/$*
@@ -78,18 +78,18 @@ RECIPES = case-spaghetti case-egg-noodles case-tortilla-soup \
  web-sweet-and-spicy-pork-and-napa-cabbage-stir-fry-with-spicy-noodles
 
 RECIPE_URLS_FILE = tests/input/recipe-urls.csv
-RECIPE_GROUPINGS = src/ontogpt/owl/recipe-groupings.ofn
+RECIPE_GROUPINGS = src/ontollm/owl/recipe-groupings.ofn
 
 tests/output/owl/recipe-case-%.owl: tests/input/cases/recipe-%.txt
-	$(RUN) ontogpt extract -t recipe $< --set-slot-value url=https://w3id.org/ontogpt/recipes/instances/$* -o $@ -O owl
+	$(RUN) ontollm extract -t recipe $< --set-slot-value url=https://w3id.org/ontollm/recipes/instances/$* -o $@ -O owl
 .PRECIOUS: tests/output/owl/recipe-case-%.owl
 
 tests/output/owl/recipe-web-%.owl: 
-	$(RUN) ontogpt recipe-extract $* -R $(RECIPE_URLS_FILE) -o $@ -O owl
+	$(RUN) ontollm recipe-extract $* -R $(RECIPE_URLS_FILE) -o $@ -O owl
 .PRECIOUS: tests/output/owl/recipe-web-%.owl
 
 tests/output/owl/recipe-web-%.yaml: 
-	$(RUN) ontogpt recipe-extract $* -R $(RECIPE_URLS_FILE) -o $@ -O yaml
+	$(RUN) ontollm recipe-extract $* -R $(RECIPE_URLS_FILE) -o $@ -O yaml
 .PRECIOUS: tests/output/owl/recipe-web-%.yaml
 
 tests/output/owl/recipe-all.owl: $(patsubst %, tests/output/owl/recipe-%.owl, $(RECIPES))
@@ -128,24 +128,25 @@ t:
 
 
 tests/input/genesets/%.yaml: tests/input/genesets/%.json
-	$(RUN) ontogpt convert-geneset -U $< -o $@
+	$(RUN) ontollm convert-geneset -U $< -o $@
 .PRECIOUS: tests/input/genesets/%.yaml
 
 N=2
 
 analysis/enrichment/zebrafish/%-results-$(N).yaml: tests/input/genesets/zebrafish/%.yaml
-	$(RUN) ontogpt -vv eval-enrichment -n $(N) -U $< -A tests/input/zfin.gaf -o $@.tmp && mv $@.tmp $@
+	$(RUN) ontollm -vv eval-enrichment -n $(N) -U $< -A tests/input/zfin.gaf -o $@.tmp && mv $@.tmp $@
 
 
 analysis/enrichment/yeast/%-results-$(N).yaml: tests/input/genesets/yeast/%.yaml
-	$(RUN) ontogpt -vv eval-enrichment -n $(N) -U $< -A tests/input/sgd.gaf -o $@.tmp && mv $@.tmp $@
+	$(RUN) ontollm -vv eval-enrichment -n $(N) -U $< -A tests/input/sgd.gaf -o $@.tmp && mv $@.tmp $@
 
 
+#TODO: substitute GPT-4 with other LLM(s)
 analysis/enrichment/gpt4/%-results-$(N).yaml: tests/input/genesets/%.yaml analysis/enrichment/TRIGGER-REANALYSIS
 	$(RUN) ontogpt  -v eval-enrichment  --model gpt-4 -n $(N) -U $< -o $@.tmp && mv $@.tmp $@
 
 analysis/enrichment/%-results-$(N).yaml: tests/input/genesets/%.yaml analysis/enrichment/TRIGGER-REANALYSIS
-	$(RUN) ontogpt -v eval-enrichment -n $(N) -U $< -o $@.tmp && mv $@.tmp $@
+	$(RUN) ontollm -v eval-enrichment -n $(N) -U $< -o $@.tmp && mv $@.tmp $@
 
 
 analysis/enrichment-summary.yaml:
@@ -160,6 +161,7 @@ analysis/zebrafish-enrichment-summary-$(N).yaml:
 analysis/yeast-enrichment-summary-$(N).yaml:
 	cat analysis/enrichment/yeast/*-$(N).yaml > $@
 
+#TODO: substitute GPT-4 with other LLM(s)
 analysis/gpt4-enrichment-summary-$(N).yaml:
 	cat analysis/enrichment/gpt4/*-$(N).yaml > $@
 
@@ -167,4 +169,5 @@ analysis/gpt4-enrichment-summary-$(N).yaml:
 all_enrich: $(patsubst %, analysis/enrichment/%-results-$(N).yaml, $(GENE_SETS))
 all_zfin_enrich: $(patsubst %, analysis/enrichment/zebrafish/%-results-$(N).yaml, $(ZFIN_GENE_SETS))
 all_sgd_enrich: $(patsubst %, analysis/enrichment/yeast/%-results-$(N).yaml, $(SGD_GENE_SETS))
+#TODO: substitute GPT-4 with other LLM(s)
 all_gpt4_enrich: $(patsubst %, analysis/enrichment/gpt4/%-results-$(N).yaml, $(GENE_SETS))

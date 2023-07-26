@@ -1,4 +1,4 @@
-site_name: "OntoGPT"
+site_name: "OntoLLM"
 theme:
   name: material
   analytics:
@@ -41,5 +41,5 @@ nav:
       - Recipes: recipe/index.md
       - Treatments: treatment/index.md
   - HALO Schema: halo/index.md
-site_url: https://monarch-initiative.github.io/ontogpt/
-repo_url: https://github.com/monarch-initiative/ontogpt/
+site_url: https://ruchira.github.io/ontollm/
+repo_url: https://github.com/ruchira/ontollm/

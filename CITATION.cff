@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "If you use OntoGPT, please cite it as follows."
+message: "If you use OntoGPT or its descendant OntoLLM, please cite it as follows."
 authors:
 - family-names: "Caufield"
   given-names: "J. Harry"
