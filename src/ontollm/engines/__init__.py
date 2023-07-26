@@ -1,1 +1,1 @@
-from ontogpt.engines.resolver import create_engine  # noqa
+from ontollm.engines.resolver import create_engine  # noqa
