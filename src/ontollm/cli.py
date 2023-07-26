@@ -1,4 +1,4 @@
-"""Command line interface for ontogpt."""
+"""Command line interface for ontollm."""
 import codecs
 import json
 import logging
@@ -12,6 +12,7 @@ from typing import List, Optional
 
 import click
 import jsonlines
+# TODO Remove dependency on openai
 import openai
 import yaml
 from oaklib import get_adapter
@@ -21,46 +22,47 @@ from oaklib.io.streaming_csv_writer import StreamingCsvWriter
 from sssom.parsers import parse_sssom_table, to_mapping_set_document
 from sssom.util import to_mapping_set_dataframe
 
-import ontogpt.ontex.extractor as extractor
-from ontogpt import MODELS, DEFAULT_MODEL, __version__
-from ontogpt.clients import OpenAIClient
-from ontogpt.clients.pubmed_client import PubmedClient
-from ontogpt.clients.soup_client import SoupClient
-from ontogpt.clients.wikipedia_client import WikipediaClient
-from ontogpt.engines import create_engine
-from ontogpt.engines.embedding_similarity_engine import SimilarityEngine
-from ontogpt.engines.enrichment import EnrichmentEngine
-from ontogpt.engines.ggml_engine import GGMLEngine
-from ontogpt.engines.generic_engine import GenericEngine, QuestionCollection
-from ontogpt.engines.halo_engine import HALOEngine
-from ontogpt.engines.hfhub_engine import HFHubEngine
-from ontogpt.engines.knowledge_engine import KnowledgeEngine
-from ontogpt.engines.mapping_engine import MappingEngine
-from ontogpt.engines.pheno_engine import PhenoEngine
-from ontogpt.engines.reasoner_engine import ReasonerEngine
-from ontogpt.engines.spires_engine import SPIRESEngine
-from ontogpt.engines.synonym_engine import SynonymEngine
-from ontogpt.evaluation.enrichment.eval_enrichment import EvalEnrichment
-from ontogpt.evaluation.resolver import create_evaluator
-from ontogpt.io.csv_wrapper import write_obj_as_csv
-from ontogpt.io.html_exporter import HTMLExporter
-from ontogpt.io.markdown_exporter import MarkdownExporter
-from ontogpt.utils.gene_set_utils import (
+import ontollm.ontex.extractor as extractor
+from ontollm import MODELS, DEFAULT_MODEL, __version__
+# TODO Remove dependency on OpenAIClient
+from ontollm.clients import OpenAIClient
+from ontollm.clients.pubmed_client import PubmedClient
+from ontollm.clients.soup_client import SoupClient
+from ontollm.clients.wikipedia_client import WikipediaClient
+from ontollm.engines import create_engine
+from ontollm.engines.embedding_similarity_engine import SimilarityEngine
+from ontollm.engines.enrichment import EnrichmentEngine
+from ontollm.engines.ggml_engine import GGMLEngine
+from ontollm.engines.generic_engine import GenericEngine, QuestionCollection
+from ontollm.engines.halo_engine import HALOEngine
+from ontollm.engines.hfhub_engine import HFHubEngine
+from ontollm.engines.knowledge_engine import KnowledgeEngine
+from ontollm.engines.mapping_engine import MappingEngine
+from ontollm.engines.pheno_engine import PhenoEngine
+from ontollm.engines.reasoner_engine import ReasonerEngine
+from ontollm.engines.spires_engine import SPIRESEngine
+from ontollm.engines.synonym_engine import SynonymEngine
+from ontollm.evaluation.enrichment.eval_enrichment import EvalEnrichment
+from ontollm.evaluation.resolver import create_evaluator
+from ontollm.io.csv_wrapper import write_obj_as_csv
+from ontollm.io.html_exporter import HTMLExporter
+from ontollm.io.markdown_exporter import MarkdownExporter
+from ontollm.utils.gene_set_utils import (
     GeneSet,
     _is_human,
     fill_missing_gene_set_values,
     parse_gene_set,
 )
-from ontogpt.utils.model_utils import get_model
+from ontollm.utils.model_utils import get_model
 
 __all__ = [
     "main",
 ]
 
-from ontogpt.io.owl_exporter import OWLExporter
-from ontogpt.io.rdf_exporter import RDFExporter
-from ontogpt.io.yaml_wrapper import dump_minimal_yaml
-from ontogpt.templates.core import ExtractionResult
+from ontollm.io.owl_exporter import OWLExporter
+from ontollm.io.rdf_exporter import RDFExporter
+from ontollm.io.yaml_wrapper import dump_minimal_yaml
+from ontollm.templates.core import ExtractionResult
 
 
 @dataclass
@@ -170,7 +172,7 @@ output_format_options = click.option(
 )
 @click.version_option(__version__)
 def main(verbose: int, quiet: bool, cache_db: str, skip_annotator):
-    """CLI for ontogpt.
+    """CLI for ontollm.
 
     :param verbose: Verbosity while running.
     :param quiet: Boolean to be quiet or verbose.
@@ -230,7 +232,7 @@ def extract(
 
     Example:
 
-        ontogpt extract -t gocam.GoCamAnnotations -i gocam-27929086.txt
+        ontollm extract -t gocam.GoCamAnnotations -i gocam-27929086.txt
 
     The input argument must be either a file path or a string.
     Use the -i/--input-file option followed by the path to the input file if using the former.
@@ -241,11 +243,12 @@ def extract(
 
     Example:
 
-        ontogpt -extract -t gocam.GoCamAnnotations -T GeneOrganismRelationship "the mouse Shh gene"
+        ontollm -extract -t gocam.GoCamAnnotations -T GeneOrganismRelationship "the mouse Shh gene"
 
     """
     logging.info(f"Creating for {template}")
 
+    # TODO Use another default model source
     # Choose model based on input, or use the default
     model_source = "OpenAI"
     found = False
@@ -258,7 +261,7 @@ def extract(
     if model and not found:
         logging.warning(
             f"""Model name not recognized or not supported yet. Using default, {DEFAULT_MODEL}.
-            See all models with `ontogpt list-models`"""
+            See all models with `ontollm list-models`"""
         )
 
     if not inputfile or inputfile == "-":
@@ -275,6 +278,8 @@ def extract(
     elif inputfile and not Path(inputfile).exists():
         raise FileNotFoundError(f"Cannot find input file {inputfile}")
 
+    # TODO Make SPIRESEngine work without OpenAI, and change the model_source
+    # here
     if model_source == "OpenAI":
         ke = SPIRESEngine(template, **kwargs)
         if settings.cache_db:
@@ -673,11 +678,11 @@ def enrichment(
 
     Usage:
 
-        ontogpt enrichment -r sqlite:obo:hgnc -U tests/input/genesets/dopamine.yaml
+        ontollm enrichment -r sqlite:obo:hgnc -U tests/input/genesets/dopamine.yaml
 
     Usage:
 
-        ontogpt enrichment -r sqlite:obo:hgnc -U tests/input/genesets/dopamine.yaml
+        ontollm enrichment -r sqlite:obo:hgnc -U tests/input/genesets/dopamine.yaml
 
     """
     if not genes and not input_file:
@@ -743,6 +748,7 @@ def embed(text, context, output, model, output_format, **kwargs):
         raise ValueError("Text must be passed")
     if model is None:
         model = "text-embedding-ada-002"
+    # TODO Make some other client the default
     client = OpenAIClient(model=model)
     resp = client.embeddings(text)
     print(resp)
@@ -772,6 +778,7 @@ def text_similarity(text, context, output, model, output_format, **kwargs):
     print(text2)
     if model is None:
         model = "text-embedding-ada-002"
+    # TODO Make some other client the default
     client = OpenAIClient(model=model)
     sim = client.similarity(text1, text2, model=model)
     print(sim)
@@ -801,6 +808,7 @@ def text_distance(text, context, output, model, output_format, **kwargs):
     print(text2)
     if model is None:
         model = "text-embedding-ada-002"
+    # TODO Make some other client the default
     client = OpenAIClient(model=model)
     sim = client.euclidian_distance(text1, text2, model=model)
     print(sim)
@@ -1150,6 +1158,7 @@ def fill(template, object: str, examples, output, output_format, **kwargs):
 
 
 @main.command()
+#TODO Remove the function openai_models
 def openai_models(**kwargs):
     """List OpenAI models for prompt completion."""
     ai = OpenAIClient()
@@ -1164,6 +1173,7 @@ def openai_models(**kwargs):
 @click.argument("input")
 def complete(input, output, output_format, **kwargs):
     """Prompt completion."""
+    # TODO Use some other client
     ai = OpenAIClient()
     text = open(input).read()
     payload = ai.complete(text)
@@ -1192,6 +1202,7 @@ def parse(template, input):
 @click.option("-D", "database", help="Path to sqlite database.")
 def dump_completions(model, match, database, output, output_format):
     """Dump cached completions."""
+    # TODO Use some other client
     client = OpenAIClient()
     if database:
         client.cache_db_path = database
@@ -1272,11 +1283,12 @@ def clinical_notes(
 
     Example:
 
-        ontogpt clinical-notes -d "middle-aged female patient with diabetes"
-        ontogpt clinical-notes --description "middle-aged female patient with diabetes"\
+        ontollm clinical-notes -d "middle-aged female patient with diabetes"
+        ontollm clinical-notes --description "middle-aged female patient with diabetes"\
          --sections medications --sections "vital signs"
 
     """
+    # TODO Use some other client
     c = OpenAIClient()
     prompt = "create mock clinical notes for a patient like this: " + description
     if sections:

@@ -1,4 +1,4 @@
-"""ontogpt package."""
+"""ontollm package."""
 from importlib import metadata
 from pathlib import Path
 
