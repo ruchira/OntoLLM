@@ -5,20 +5,20 @@ import re
 import streamlit as st
 from oaklib import get_adapter
 
-from ontogpt.engines import create_engine
-from ontogpt.engines.enrichment import EnrichmentEngine, GeneDescriptionSource
-from ontogpt.engines.knowledge_engine import (
+from ontollm.engines import create_engine
+from ontollm.engines.enrichment import EnrichmentEngine, GeneDescriptionSource
+from ontollm.engines.knowledge_engine import (
     MODEL_GPT_3_5_TURBO,
     MODEL_GPT_4,
     MODEL_TEXT_DAVINCI_003,
 )
-from ontogpt.utils.gene_set_utils import GeneSet
+from ontollm.utils.gene_set_utils import GeneSet
 
 go = get_adapter("sqlite:obo:go")
 
 # Title of the app
 st.title("SPINDOCTOR")
-st.caption("A tool for summarizing gene sets using GPT")
+st.caption("A tool for summarizing gene sets using LLMs")
 
 col1, col2 = st.columns(2)
 
