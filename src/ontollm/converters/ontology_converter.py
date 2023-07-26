@@ -10,7 +10,7 @@ from oaklib.datamodels.obograph import Graph
 from oaklib.datamodels.vocabulary import IS_A
 from oaklib.interfaces.obograph_interface import OboGraphInterface
 
-from ontogpt.templates.halo import Ontology, OntologyElement
+from ontollm.templates.halo import Ontology, OntologyElement
 
 this_path = Path(__file__).parent
 logger = logging.getLogger(__name__)
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class OntologyConverter:
-    """Converts an OAK ontology to an OntoGPT schema."""
+    """Converts an OAK ontology to an OntoLLM schema."""
 
     adapter: OboGraphInterface = None
     schemaview: SchemaView = None
