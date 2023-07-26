@@ -113,7 +113,7 @@ class KnowledgeEngine(ABC):
     labelers: List[BasicOntologyInterface] = None
     """Labelers that map CURIEs to labels"""
 
-    client: OpenAIClient = None
+    client: LLMClient = None
     """All calls to LLMs are delegated through this client"""
 
     dictionary: Dict[str, str] = field(default_factory=dict)
@@ -569,5 +569,4 @@ class KnowledgeEngine(ABC):
         return resultset[0]
 
     def set_up_client(self):
-        self.client = OpenAIClient(model=self.model)
-        logging.info("Setting up OpenAI client API Key")
+        self.client = LLMClient(model=self.model)
