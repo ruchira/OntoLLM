@@ -8,9 +8,12 @@ from oaklib import get_adapter
 from ontollm.engines import create_engine
 from ontollm.engines.enrichment import EnrichmentEngine, GeneDescriptionSource
 from ontollm.engines.knowledge_engine import (
-    MODEL_GPT_3_5_TURBO,
-    MODEL_GPT_4,
-    MODEL_TEXT_DAVINCI_003,
+    MODEL_GPT_4_ALL_J_1_3_GROOVY,
+    MODEL_FLAN_T5_XXL,
+    MODEL_FLAN_UL2,
+    MODEL_FALCON_40B_INSTRUCT,
+    MODEL_BLOOM,
+    MODEL_DOLLY_V2_12B,
 )
 from ontollm.utils.gene_set_utils import GeneSet
 
@@ -26,7 +29,9 @@ col1, col2 = st.columns(2)
 gene_symbols = col1.text_area("Enter a list of human gene symbols")
 
 model = col1.selectbox(
-    "Select the model:", (MODEL_GPT_3_5_TURBO, MODEL_TEXT_DAVINCI_003, MODEL_GPT_4)
+    "Select the model:", (MODEL_GPT_4_ALL_J_1_3_GROOVY, MODEL_FLAN_T5_XXL,
+                          MODEL_FLAN_UL2, MODEL_FALCON_40B_INSTRUCT,
+                          MODEL_BLOOM, MODEL_DOLLY_V2_12B)
 )
 
 source = col1.selectbox(
