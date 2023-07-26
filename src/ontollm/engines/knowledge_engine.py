@@ -10,7 +10,6 @@ from typing import Dict, Iterator, List, Optional, TextIO, Union
 from urllib.parse import quote
 
 import inflection
-import openai
 import pydantic
 import tiktoken
 import yaml
@@ -23,9 +22,9 @@ from oaklib.interfaces import MappingProviderInterface, TextAnnotatorInterface
 from oaklib.utilities.apikey_manager import get_apikey_value
 from oaklib.utilities.subsets.value_set_expander import ValueSetExpander
 
-from ontogpt import DEFAULT_MODEL
-from ontogpt.clients import OpenAIClient
-from ontogpt.templates.core import ExtractionResult, NamedEntity
+from ontollm import DEFAULT_MODEL
+from ontollm.clients import LLMClient
+from ontollm.templates.core import ExtractionResult, NamedEntity
 
 this_path = Path(__file__).parent
 logger = logging.getLogger(__name__)
@@ -233,7 +232,7 @@ class KnowledgeEngine(ABC):
             if len(roots) != 1:
                 raise ValueError(f"Template {template} does not have singular root: {roots}")
             class_name = roots[0]
-        mod = importlib.import_module(f"ontogpt.templates.{module_name}")
+        mod = importlib.import_module(f"ontollm.templates.{module_name}")
         self.template_module = mod
         self.template_pyclass = mod.__dict__[class_name]
         self.schemaview = sv
