@@ -1,6 +1,6 @@
 # OntoLLM
 
-OntoLLM is a descendant of OntoGPT. While OntoGPT requires an account with "OpenAI" in order to run, OntoLLM aims to leave the choice of LLM up to the user. A number of open-source LLMs, with [varying degrees of actual openness](https://opening-up-chatgpt.github.io), are available today. OntoLLM seeks to remove the pre-requisite "OpenAI account" from OntoGPT, and provide a modified set of instructions, for users planning to use a different LLM.
+OntoLLM is a descendant of OntoGPT. While OntoGPT requires an account with "OpenAI" in order to run, OntoLLM supports LLMs that are open source and available for commercial use. A number of open-source LLMs, with [varying degrees of actual openness](https://opening-up-chatgpt.github.io), are available today. OntoLLM seeks to remove the pre-requisite "OpenAI account" from OntoGPT, and provide a modified set of instructions, for users planning to use a different LLM.
 
 The original README from the OntoGPT project is currently below.
 
