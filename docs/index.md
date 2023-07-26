@@ -1,10 +1,10 @@
-# OntoGPT
+# OntoLLM
 
-Generation of Ontologies and Knowledge Bases using GPT
+Generation of Ontologies and Knowledge Bases using LLMs
 
 A knowledge extraction tool that uses a large language model (LLM) to extract semantic information from text.
 
-This exploits the ability of LLMs such as GPT-3 to return user-defined data structures as a response.
+This exploits the ability of LLMs such as BLOOM or Pythia to return user-defined data structures as a response.
 
 Currently there are two different pipelines implemented:
 
@@ -33,12 +33,12 @@ Given a short text `abstract.txt` with content such as:
    > ...
    > ...
 
-(see [full input](https://github.com/monarch-initiative/ontogpt/blob/main/tests/input/cases/gocam-betacat.txt))
+(see [full input](https://github.com/monarch-initiative/ontollm/blob/main/tests/input/cases/gocam-betacat.txt))
 
-We can extract this into the [GO pathway datamodel](https://github.com/monarch-initiative/ontogpt/blob/main/src/ontogpt/templates/gocam.yaml):
+We can extract this into the [GO pathway datamodel](https://github.com/monarch-initiative/ontollm/blob/main/src/ontollm/templates/gocam.yaml):
 
 ```bash
-ontogpt extract -t gocam.GoCamAnnotations abstract.txt
+ontollm extract -t gocam.GoCamAnnotations abstract.txt
 ```
 
 Giving schema-compliant YAML such as:
@@ -65,7 +65,7 @@ gene_functions:
 ...
 ```
 
-See [full output](https://github.com/monarch-initiative/ontogpt/blob/main/tests/output/gocam-betacat.yaml).
+See [full output](https://github.com/monarch-initiative/ontollm/blob/main/tests/output/gocam-betacat.yaml).
 
 Ungrounded named entities appear as text preceded by AUTO (or your preferred prefix, provided with the --auto-prefix option when using the extract command).
 
@@ -74,7 +74,7 @@ Ungrounded named entities appear as text preceded by AUTO (or your preferred pre
 1. You provide an arbitrary data model, describing the structure you want to extract text into
     - this can be nested (but see limitations below)
 2. Provide your preferred annotations for grounding NamedEntity fields
-3. OntoGPT will:
+3. OntoLLM will:
     - generate a prompt
     - feed the prompt to a language model (currently one of OpenAI's models)
     - parse the results into a dictionary structure
@@ -97,7 +97,7 @@ poetry run runoak set-apikey -e bioportal <your bioportal api key>
 
 ### Step 1: Define a schema
 
-See [src/ontogpt/templates/](https://github.com/monarch-initiative/ontogpt/tree/main/src/ontogpt/templates) for examples.
+See [src/ontollm/templates/](https://github.com/monarch-initiative/ontollm/tree/main/src/ontollm/templates) for examples.
 
 Define a schema (using a subset of [LinkML](https://linkml.io/)) that describes the structure you want to extract from your text.
 
@@ -185,12 +185,12 @@ For example, if your schema is defined within `entities.yaml`, run `make src/tem
 e.g.
 
 ```
-ontogpt extract -t mendelian_disease.MendelianDisease marfan-wikipedia.txt
+ontollm extract -t mendelian_disease.MendelianDisease marfan-wikipedia.txt
 ```
 
 ## Web Application
 
-There is a bare bones web application for running OntoGPT and viewing results.
+There is a bare bones web application for running OntoLLM and viewing results.
 
 Install the required dependencies first with the following command:
 ```
@@ -200,7 +200,7 @@ poetry install -E web
 Then run the following command to start the web application:
 
 ```
-poetry run web-ontogpt
+poetry run web-ontollm
 ```
 
 Note that the agent running uvicorn must have the API key set, so for obvious reasons
