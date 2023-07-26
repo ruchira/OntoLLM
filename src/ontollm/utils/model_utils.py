@@ -4,7 +4,7 @@ import pystow
 import logging
 from pathlib import PosixPath
 
-ONTOGPT_MODULE = pystow.module("ontogpt")
+ONTOLLM_MODULE = pystow.module("ontollm")
 
 
 def get_model(url: str) -> PosixPath:
@@ -14,7 +14,7 @@ def get_model(url: str) -> PosixPath:
     or the path to where it already exists.
     """
     logging.info(f"Retrieving model from {url} if needed...")
-    mod_path = ONTOGPT_MODULE.ensure(url=url, force=False, download_kwargs={"backend": "requests"})
+    mod_path = ONTOLLM_MODULE.ensure(url=url, force=False, download_kwargs={"backend": "requests"})
     logging.info(f"Model now at {mod_path}")
 
     return mod_path
