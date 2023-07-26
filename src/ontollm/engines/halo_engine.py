@@ -4,12 +4,13 @@ Uses code-davinci-002.
 Note also that fine-tuning can't be done with code-davinci-002, see:
 https://community.openai.com/t/finetuning-code-davinci/23132/2
 """
+#TODO Change this to use one or more open-source models licensed for commercial
+# use, such as StarCoder or Salesforce CodeGen.
 import logging
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
 
-import openai
 import pydantic
 import tiktoken
 import yaml
@@ -18,12 +19,13 @@ from linkml_runtime.utils.formatutils import camelcase
 from oaklib.datamodels.obograph import Graph
 from oaklib.datamodels.vocabulary import IS_A
 from oaklib.interfaces.obograph_interface import OboGraphInterface
+# TODO Change tiktoken to a tokenizer that goes with the LLMs we use
 from tiktoken import Encoding
 
-from ontogpt.clients import OpenAIClient
-from ontogpt.engines.knowledge_engine import FIELD, KnowledgeEngine
-from ontogpt.io.yaml_wrapper import dump_minimal_yaml
-from ontogpt.templates.halo import Ontology, OntologyElement
+from ontollm.clients import LLMClient
+from ontollm.engines.knowledge_engine import FIELD, KnowledgeEngine
+from ontollm.io.yaml_wrapper import dump_minimal_yaml
+from ontollm.templates.halo import Ontology, OntologyElement
 
 this_path = Path(__file__).parent
 logger = logging.getLogger(__name__)
@@ -72,9 +74,7 @@ class HALOEngine(KnowledgeEngine):
 
     def __post_init__(self):
         self.template_class = self._get_template_class("halo.OntologyElement")
-        self.client = OpenAIClient(model=self.engine)
-        self.api_key = self._get_openai_api_key()
-        openai.api_key = self.api_key
+        self.client = LLMClient(model=self.engine)
 
     def seed(self, seed_ontology: Ontology):
         """Seed the engine with an initial ontology.
