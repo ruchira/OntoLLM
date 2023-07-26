@@ -11,12 +11,12 @@ from jinja2 import Template
 from oaklib import BasicOntologyInterface, get_adapter
 from pydantic import BaseModel
 
-from ontogpt import MODELS
-from ontogpt.engines.knowledge_engine import KnowledgeEngine
-from ontogpt.prompts.enrichment import DEFAULT_ENRICHMENT_PROMPT
-from ontogpt.templates.class_enrichment import ClassEnrichmentResult
-from ontogpt.templates.gene_description_term import GeneDescriptionTerm
-from ontogpt.utils.gene_set_utils import (
+from ontollm import MODELS
+from ontollm.engines.knowledge_engine import KnowledgeEngine
+from ontollm.prompts.enrichment import DEFAULT_ENRICHMENT_PROMPT
+from ontollm.templates.class_enrichment import ClassEnrichmentResult
+from ontollm.templates.gene_description_term import GeneDescriptionTerm
+from ontollm.utils.gene_set_utils import (
     ENTITY_ID,
     GENE_TUPLE,
     GeneSet,
@@ -24,11 +24,6 @@ from ontogpt.utils.gene_set_utils import (
 )
 
 logger = logging.getLogger(__name__)
-
-
-MODEL_GPT_4_NAMES = [
-    model["alternative_names"][0] for model in MODELS if model["name"] == "MODEL_GPT_4"
-][0]
 
 SUMMARY_KEYWORD = "Summary"
 MECHANISM_KEYWORD = "Mechanism"
@@ -99,9 +94,6 @@ class EnrichmentEngine(KnowledgeEngine):
     Descriptions of Controlled Terms for Ontological enRichment
 
     """
-
-    # engine: str = "text-davinci-003"
-    # model: str = "xxxgpt-3.5-turbo"
 
     label_resolvers: Dict[str, BasicOntologyInterface] = field(default_factory=dict)
 
@@ -249,13 +241,13 @@ class EnrichmentEngine(KnowledgeEngine):
             ENRICHED_TERMS_KEYWORD=ENRICHED_TERMS_KEYWORD,
             END_MARKER=self.end_marker,
         )
+        # TODO: May be able to delete all this prompt truncation code
+        # since we are not using any model from OpenAI.
         logging.debug(f"Prompt from template: {prompt}")
         logging.info(f"Prompt [{truncation_factor}] Length: {len(prompt)}")
         # https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them
         prompt_length = len(self.encoding.encode(prompt)) + 10
         max_len_total = 4097
-        if self.model in MODEL_GPT_4_NAMES:
-            max_len_total = 8193
         max_len = max_len_total - self.completion_length
         logging.info(
             f"Prompt [{truncation_factor}] Toks: {prompt_length} / {max_len} Str={len(prompt)}"
