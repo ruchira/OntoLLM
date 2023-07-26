@@ -8,23 +8,21 @@ from typing import List, Optional, Union
 from jinja2 import Template
 from pydantic import BaseModel
 
-from ontogpt import MODELS
-from ontogpt.engines.knowledge_engine import KnowledgeEngine
-from ontogpt.ontex.extractor import (
+from ontollm import MODELS
+from ontollm.engines.knowledge_engine import KnowledgeEngine
+from ontollm.ontex.extractor import (
     Answer,
     Axiom,
     Explanation,
-    GPTReasonMethodType,
+    LLMReasonMethodType,
     Task,
     TaskCollection,
 )
-from ontogpt.prompts.reasoning import DEFAULT_REASONING_PROMPT
-from ontogpt.utils.parse_utils import split_on_one_of
+from ontollm.prompts.reasoning import DEFAULT_REASONING_PROMPT
+from ontollm.utils.parse_utils import split_on_one_of
 
 logger = logging.getLogger(__name__)
 
-
-MODEL_GPT_4_NAMES = [model["alternative_names"][0] for model in MODELS if model["name"] == "MODEL_GPT_4"][0]
 
 def flatten_list(lst):
     flat_list = []
@@ -44,7 +42,7 @@ class ReasonerResult(BaseModel):
     task_name: Optional[str] = None
     task_type: Optional[str] = None
     task_obfuscated: Optional[bool] = None
-    method: Optional[GPTReasonMethodType] = None
+    method: Optional[LLMReasonMethodType] = None
     model: Optional[str] = None
     description: Optional[str] = None
     answers: Optional[List[Answer]] = None
@@ -75,10 +73,10 @@ class ReasonerResultSet(BaseModel):
 
 @dataclass
 class ReasonerEngine(KnowledgeEngine):
-    """Engine for performing reasoning using GPT.
+    """Engine for performing reasoning using LLMs.
 
     This engine takes as input an Ontology, and a query Task,
-    and then translates this to a GPT prompt that asks GPT to
+    and then translates this to an LLM prompt that asks the LLM to
     perform the task over the ontology after reasoning over it.
 
     The Task is typically a query such as finding superclasses of
@@ -86,15 +84,15 @@ class ReasonerEngine(KnowledgeEngine):
 
     This is intended primarily for investigation purposes. For practical
     scenarios, it is recommended to use a dedicated OWL reasoner. The goal
-    of this engine is to evaluate the extent to which GPT can perform
+    of this engine is to evaluate the extent to which the LLM can perform
     reasoning-like tasks, including deduction and abduction (explanation).
 
-    Due to token-length constraints on GPT models, it is usually necessary
+    Due to token-length constraints on some LLMs, it is usually necessary
     to extract a submodule prior to reasoning. This can be done using the
     OntologyExtractor:
 
     >>> from oaklib import get_adapter
-    >>> from ontogpt.ontex.extractor import OntologyExtractor, Task
+    >>> from ontollm.ontex.extractor import OntologyExtractor, Task
     >>> adapter = get_adapter("sqlite:obo:go")
     >>> extractor = OntologyExtractor(adapter=adapter)
     >>> task = extractor.extract_indirect_superclasses_task(
@@ -107,7 +105,7 @@ class ReasonerEngine(KnowledgeEngine):
 
     The task can then be passed to the reasoner engine:
 
-    >>> from ontogpt.engines.reasoner_engine import ReasonerEngine
+    >>> from ontollm.engines.reasoner_engine import ReasonerEngine
     >>> reasoner = ReasonerEngine()
     >>> result = reasoner.reason(task)
 
@@ -162,15 +160,14 @@ class ReasonerEngine(KnowledgeEngine):
             examples=task.examples,
         )
         completion_length = self.completion_length
-        if task.method == GPTReasonMethodType.EXPLANATION:
+        if task.method == LLMReasonMethodType.EXPLANATION:
             completion_length *= 2
-        elif task.method == GPTReasonMethodType.CHAIN_OF_THOUGHT:
+        elif task.method == LLMReasonMethodType.CHAIN_OF_THOUGHT:
             completion_length *= 2
+        # TODO: This truncation limit needs to be generalized
         logger.info(f"Prompt: {prompt}")
         prompt_length = len(self.encoding.encode(prompt)) + 10
         max_len_total = 4097
-        if self.model in MODEL_GPT_4_NAMES:
-            max_len_total = 8193
         max_len = max_len_total - completion_length
         completed = True
         logger.info(f"PROMPT LENGTH: {prompt_length} [max={max_len}]")
