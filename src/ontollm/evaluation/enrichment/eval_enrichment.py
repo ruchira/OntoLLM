@@ -43,9 +43,14 @@ RANDOM = "random"
 RANK_BASED = "rank_based"
 CLOSURE = "closure"
 
+# 2023-07-26 RSD I do not know why the clause
+# if model["provider"] == "OpenAI" 
+# was included in the generator expression for ENRICHMENT_MODELS. I am deleting
+# that clause but noting this here.
+
 # Set up enrichment-appropriate models
 ENRICHMENT_MODELS = [
-    model["alternative_names"][0] for model in MODELS if model["provider"] == "OpenAI"
+    model["alternative_names"][0] for model in MODELS
 ]
 
 
