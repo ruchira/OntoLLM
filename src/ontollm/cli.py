@@ -132,7 +132,7 @@ interactive_option = click.option(
 model_option = click.option(
     "-m",
     "--model",
-    help="Model name to use, e.g. openai-text-davinci-003."
+    help="Model name to use, e.g. bloom."
 )
 prompt_template_option = click.option(
     "--prompt-template", help="Path to a file containing the prompt."
