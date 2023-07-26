@@ -9,12 +9,12 @@ from pydantic import BaseModel
 from starlette.staticfiles import StaticFiles
 from starlette.templating import Jinja2Templates
 
-from ontogpt import MODELS
-from ontogpt.engines.enrichment import EnrichmentEngine
-from ontogpt.engines.knowledge_engine import DATAMODELS
-from ontogpt.engines.spires_engine import SPIRESEngine
-from ontogpt.io.html_exporter import HTMLExporter
-from ontogpt.utils.gene_set_utils import GeneSet
+from ontollm import MODELS
+from ontollm.engines.enrichment import EnrichmentEngine
+from ontollm.engines.knowledge_engine import DATAMODELS
+from ontollm.engines.spires_engine import SPIRESEngine
+from ontollm.io.html_exporter import HTMLExporter
+from ontollm.utils.gene_set_utils import GeneSet
 
 this_path = Path(__file__).parent
 static_dir = this_path / "static"
@@ -89,4 +89,4 @@ def sd_form_post(request: Request, model: str = Form(...), text: str = Form(...)
 
 def start():
     """Launch with `poetry run start` at root level."""
-    uvicorn.run("ontogpt.webapp.main:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("ontollm.webapp.main:app", host="127.0.0.1", port=8000, reload=True)
