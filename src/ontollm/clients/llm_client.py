@@ -1,4 +1,4 @@
-"""OpenAI client."""
+"""LLM client."""
 import ast
 import logging
 import sqlite3
@@ -9,7 +9,6 @@ from time import sleep
 from typing import Iterator, Tuple
 
 import numpy as np
-import openai
 from oaklib.utilities.apikey_manager import get_apikey_value
 
 logger = logging.getLogger(__name__)
@@ -17,7 +16,7 @@ NUM_RETRIES = 3
 
 
 @dataclass
-class OpenAIClient:
+class LLMClient:
     # max_tokens: int = field(default_factory=lambda: 3000)
     model: str = field(default_factory=lambda: "gpt-3.5-turbo")
     cache_db_path: str = None
@@ -157,7 +156,7 @@ class OpenAIClient:
         if payload:
             logger.info(f"Using cached embeddings for {model} {text[0:80]}...")
             return ast.literal_eval(payload[0])
-        logger.info(f"querying OpenAI for {model} {text[0:80]}...")
+        logger.info(f"querying LLM for {model} {text[0:80]}...")
         response = openai.Embedding.create(
             model=model,
             input=text,
