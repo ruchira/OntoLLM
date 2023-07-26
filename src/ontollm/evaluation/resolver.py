@@ -3,8 +3,8 @@ from typing import Optional, Type, Union
 
 from class_resolver import ClassResolver
 
-from ontogpt.evaluation.ctd.eval_ctd import EvalCTD
-from ontogpt.evaluation.evaluation_engine import SPIRESEvaluationEngine
+from ontollm.evaluation.ctd.eval_ctd import EvalCTD
+from ontollm.evaluation.evaluation_engine import SPIRESEvaluationEngine
 
 resolver = ClassResolver([EvalCTD], base=SPIRESEvaluationEngine)
 

@@ -16,7 +16,7 @@ from typing import List, Optional, Set
 from oaklib import BasicOntologyInterface
 from pydantic import BaseModel
 
-from ontogpt.engines.spires_engine import SPIRESEngine
+from ontollm.engines.spires_engine import SPIRESEngine
 
 
 def jaccard_index(a: Set, b: Set):
