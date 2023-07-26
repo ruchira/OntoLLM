@@ -8,8 +8,8 @@ from linkml.generators.pythongen import PythonGenerator
 from linkml_owl.dumpers.owl_dumper import OWLDumper
 from linkml_runtime import SchemaView
 
-from ontogpt.io.exporter import Exporter
-from ontogpt.templates.core import ExtractionResult
+from ontollm.io.exporter import Exporter
+from ontollm.templates.core import ExtractionResult
 
 
 @dataclass

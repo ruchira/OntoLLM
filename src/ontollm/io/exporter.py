@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TextIO, Union
 
-from ontogpt.templates.core import ExtractionResult
+from ontollm.templates.core import ExtractionResult
 
 
 def is_curie(s: str) -> bool:

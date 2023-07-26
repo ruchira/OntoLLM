@@ -7,8 +7,8 @@ from typing import Any, TextIO, Union
 import pydantic
 import yaml
 
-from ontogpt.io.exporter import Exporter, is_curie
-from ontogpt.templates.core import ExtractionResult
+from ontollm.io.exporter import Exporter, is_curie
+from ontollm.templates.core import ExtractionResult
 
 
 @dataclass

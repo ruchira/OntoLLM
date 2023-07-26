@@ -8,8 +8,8 @@ from linkml.generators.pythongen import PythonGenerator
 from linkml_runtime import SchemaView
 from linkml_runtime.dumpers import rdflib_dumper
 
-from ontogpt.io.exporter import Exporter
-from ontogpt.templates.core import ExtractionResult
+from ontollm.io.exporter import Exporter
+from ontollm.templates.core import ExtractionResult
 
 # TODO: get URI prefixes from bioregistry
 
