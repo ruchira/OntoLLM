@@ -19,7 +19,6 @@ from oaklib import BasicOntologyInterface, get_adapter
 from oaklib.datamodels.text_annotator import TextAnnotationConfiguration
 from oaklib.implementations import OntoPortalImplementationBase
 from oaklib.interfaces import MappingProviderInterface, TextAnnotatorInterface
-from oaklib.utilities.apikey_manager import get_apikey_value
 from oaklib.utilities.subsets.value_set_expander import ValueSetExpander
 
 from ontollm import DEFAULT_MODEL
@@ -92,9 +91,6 @@ class KnowledgeEngine(ABC):
     """LinkML SchemaView over the template.
     This is derived from the template and does not need to be set manually."""
 
-    api_key: str = None
-    """OpenAI API key."""
-
     model: MODEL_NAME = None
     """Language Model. This may be overridden in subclasses."""
 
@@ -155,10 +151,6 @@ class KnowledgeEngine(ABC):
 
         self.set_up_client()
         self.encoding = tiktoken.encoding_for_model(self.client.model)
-
-    def set_api_key(self, key: str):
-        self.api_key = key
-        openai.api_key = key
 
     def extract_from_text(
         self, text: str, cls: ClassDefinition = None, object: OBJECT = None
@@ -245,11 +237,6 @@ class KnowledgeEngine(ABC):
         if not cls:
             raise ValueError(f"Template {template} not found")
         return cls
-
-    def _get_openai_api_key(self):
-        """Get the OpenAI API key from the environment."""
-        # return os.environ.get("OPENAI_API_KEY")
-        return get_apikey_value("openai")
 
     def get_annotators(self, cls: ClassDefinition = None) -> List[BasicOntologyInterface]:
         """
@@ -584,5 +571,3 @@ class KnowledgeEngine(ABC):
     def set_up_client(self):
         self.client = OpenAIClient(model=self.model)
         logging.info("Setting up OpenAI client API Key")
-        self.api_key = self._get_openai_api_key()
-        openai.api_key = self.api_key
