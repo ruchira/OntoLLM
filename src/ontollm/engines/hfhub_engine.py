@@ -19,7 +19,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import pydantic
 from linkml_runtime.linkml_model import ClassDefinition, SlotDefinition
 
-from ontogpt.engines.knowledge_engine import (
+from ontollm.engines.knowledge_engine import (
     ANNOTATION_KEY_PROMPT,
     ANNOTATION_KEY_PROMPT_SKIP,
     EXAMPLE,
@@ -28,8 +28,8 @@ from ontogpt.engines.knowledge_engine import (
     KnowledgeEngine,
     chunk_text,
 )
-from ontogpt.templates.core import ExtractionResult
-from ontogpt.clients.hfhub_client import HFHubClient
+from ontollm.templates.core import ExtractionResult
+from ontollm.clients.hfhub_client import HFHubClient
 
 this_path = Path(__file__).parent
 
