@@ -11,6 +11,7 @@ from urllib.parse import quote
 
 import inflection
 import pydantic
+# TODO: Change tiktoken to a HuggingFace tokenizer
 import tiktoken
 import yaml
 from linkml_runtime import SchemaView
@@ -150,6 +151,7 @@ class KnowledgeEngine(ABC):
             self.mappers = [get_adapter("translator:")]
 
         self.set_up_client()
+        # TODO: Change tiktoken to a HuggingFace tokenizer
         self.encoding = tiktoken.encoding_for_model(self.client.model)
 
     def extract_from_text(
