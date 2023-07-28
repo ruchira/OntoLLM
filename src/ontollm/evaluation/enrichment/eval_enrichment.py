@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, Iterator, List, Optional, Tuple
 
+# TODO: Change tiktoken to a HuggingFace tokenizer
 import tiktoken
 import yaml
 from cachier import cachier
@@ -21,6 +22,7 @@ from oaklib.interfaces.class_enrichment_calculation_interface import (
 from oaklib.interfaces.obograph_interface import OboGraphInterface
 from oaklib.parsers.association_parser_factory import get_association_parser
 from pydantic import BaseModel
+# TODO: Change tiktoken to a HuggingFace tokenizer
 from tiktoken import Encoding
 
 from ontollm.engines import create_engine
@@ -106,6 +108,7 @@ class EvalEnrichment(EvaluationEngine):
             self.engines[model] = create_engine(None, EnrichmentEngine, model=model)
             self.engines[model].add_resolver("sqlite:obo:hgnc")
         self.engine.add_resolver("sqlite:obo:hgnc")
+        # TODO: Change tiktoken to a HuggingFace tokenizer
         self.tokenizer_encoding = tiktoken.encoding_for_model(self.engine.model)
 
     def evaluate_methods_on_gene_set(
