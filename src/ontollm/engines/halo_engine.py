@@ -4,14 +4,15 @@ Uses code-davinci-002.
 Note also that fine-tuning can't be done with code-davinci-002, see:
 https://community.openai.com/t/finetuning-code-davinci/23132/2
 """
-#TODO Change this to use one or more open-source models licensed for commercial
-# use, such as StarCoder or Salesforce CodeGen.
+# TODO Change this to use one or more open-source models licensed for
+# commercial use, such as StarCoder or Salesforce CodeGen.
 import logging
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
 
 import pydantic
+# TODO Change tiktoken to a Huggingface tokenizer
 import tiktoken
 import yaml
 from linkml.utils.schema_fixer import uncamel
@@ -19,7 +20,7 @@ from linkml_runtime.utils.formatutils import camelcase
 from oaklib.datamodels.obograph import Graph
 from oaklib.datamodels.vocabulary import IS_A
 from oaklib.interfaces.obograph_interface import OboGraphInterface
-# TODO Change tiktoken to a tokenizer that goes with the LLMs we use
+# TODO Change tiktoken to a Huggingface tokenizer
 from tiktoken import Encoding
 
 from ontollm.clients import LLMClient
@@ -70,6 +71,7 @@ class HALOEngine(KnowledgeEngine):
     element_scores: Dict[ELEMENT_NAME, float] = field(default_factory=lambda: {})
     """Ranks each element by estimated informativeness for training."""
 
+    # TODO: Change tiktoken to a huggingface tokenizer
     tokenizer_encoding: Encoding = field(default_factory=lambda: tiktoken.get_encoding("gpt2"))
 
     def __post_init__(self):
