@@ -156,6 +156,11 @@ output_format_options = click.option(
     default="yaml",
     help="Output format.",
 )
+auto_prefix_option = click.option(
+    "--auto-prefix",
+    default="AUTO",
+    help="Prefix to use for auto-generated classes. Default is AUTO.",
+)
 
 
 @click.group()
@@ -200,11 +205,7 @@ def main(verbose: int, quiet: bool, cache_db: str, skip_annotator):
 @click.option("--dictionary")
 @output_format_options
 @use_textract_options
-@click.option(
-    "--auto-prefix",
-    default="AUTO",
-    help="Prefix to use for auto-generated classes. Default is AUTO.",
-)
+@auto_prefix_option
 @click.option(
     "--set-slot-value",
     "-S",
@@ -313,11 +314,23 @@ def extract(
 @recurse_option
 @output_option_wb
 @output_format_options
-@click.option(
-    "--get-pmc/--no-get-pmc",
-    default=False,
-    help="Attempt to parse PubMed Central full text(s) instead of abstract(s) alone.",
-)
+@auto_prefix_option
+@click.argument("entity")
+def generate_extract(entity, template, output, output_format, **kwargs):
+    """Generate text using GPT and then extract knowledge from it."""
+    logging.info(f"Creating for {template}")
+    ke = SPIRESEngine(template, **kwargs)
+    logging.debug(f"Input entity: {entity}")
+    results = ke.generate_and_extract(entity)
+    write_extraction(results, output, output_format)
+
+
+@main.command()
+@template_option
+@model_option
+@recurse_option
+@output_option_wb
+@output_format_options
 @click.argument("pmid")
 def pubmed_extract(pmid, template, output, output_format, get_pmc, **kwargs):
     """Extract knowledge from a single PubMed ID."""

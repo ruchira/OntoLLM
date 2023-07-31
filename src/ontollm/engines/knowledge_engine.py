@@ -152,7 +152,11 @@ class KnowledgeEngine(ABC):
 
         self.set_up_client()
         # TODO: Change tiktoken to a HuggingFace tokenizer
-        self.encoding = tiktoken.encoding_for_model(self.client.model)
+        try:
+            self.encoding = tiktoken.encoding_for_model(self.client.model)
+        except KeyError:
+            self.encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
+            logger.error(f"Could not find encoding for model {self.client.model}")
 
     def extract_from_text(
         self, text: str, cls: ClassDefinition = None, object: OBJECT = None
