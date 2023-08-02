@@ -10,6 +10,10 @@ from sentence_transformers import SentenceTransformer
 # Note: See https://huggingface.co/models?pipeline_tag=text-generation&sort=downloads
 # for all relevant models
 
+# TODO: We want to support (at least) two options: querying a HuggingFace
+# endpoint using a HuggingFace API key, or querying a self-hosted HuggingFace
+# LLM.  See
+# https://api.python.langchain.com/en/latest/_modules/langchain/llms/self_hosted_hugging_face.html
 
 @dataclass
 class HFHubClient:
