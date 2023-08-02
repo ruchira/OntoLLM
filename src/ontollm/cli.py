@@ -21,7 +21,7 @@ from sssom.parsers import parse_sssom_table, to_mapping_set_document
 from sssom.util import to_mapping_set_dataframe
 
 import ontollm.ontex.extractor as extractor
-from ontollm import MODELS, DEFAULT_MODEL, __version__
+from ontollm import DEFAULT_MODEL, MODELS, __version__
 from ontollm.clients import HFHubClient
 from ontollm.clients.pubmed_client import PubmedClient
 from ontollm.clients.soup_client import SoupClient
@@ -29,8 +29,8 @@ from ontollm.clients.wikipedia_client import WikipediaClient
 from ontollm.engines import create_engine
 from ontollm.engines.embedding_similarity_engine import SimilarityEngine
 from ontollm.engines.enrichment import EnrichmentEngine
-from ontollm.engines.ggml_engine import GGMLEngine
 from ontollm.engines.generic_engine import GenericEngine, QuestionCollection
+from ontollm.engines.ggml_engine import GGMLEngine
 from ontollm.engines.halo_engine import HALOEngine
 from ontollm.engines.hfhub_engine import HFHubEngine
 from ontollm.engines.knowledge_engine import KnowledgeEngine
@@ -127,9 +127,7 @@ interactive_option = click.option(
     help="Interactive mode - rather than call the LLM API it will prompt you do this.",
 )
 model_option = click.option(
-    "-m",
-    "--model",
-    help="Model name to use, e.g. bloom."
+    "-m", "--model", help="Model name to use, e.g. bloom."
 )
 prompt_template_option = click.option(
     "--prompt-template", help="Path to a file containing the prompt."
@@ -322,7 +320,50 @@ def generate_extract(entity, template, output, output_format, **kwargs):
     ke = SPIRESEngine(template, **kwargs)
     logging.debug(f"Input entity: {entity}")
     results = ke.generate_and_extract(entity)
-    write_extraction(results, output, output_format)
+    write_extraction(results, output, output_format, ke)
+
+
+@main.command()
+@template_option
+@model_option
+@recurse_option
+@output_option_wb
+@output_format_options
+@auto_prefix_option
+@click.option("--ontology", "-r", help="Ontology to use; use oaklib selector path")
+@click.option("--max-iterations", "-M", default=10, type=click.INT)
+@click.option("--iteration-slot", "-I", multiple=True, help="Slots to iterate over")
+@click.option("--db", "-D", help="Where the resulting yaml database is stored")
+@click.option(
+    "--clear/--no-clear", default=False, show_default=True, help="Clear the db before starting"
+)
+@click.argument("entity")
+def iteratively_generate_extract(
+    entity,
+    template,
+    output,
+    output_format,
+    db,
+    iteration_slot,
+    max_iterations,
+    clear,
+    ontology,
+    **kwargs,
+):
+    """Iterate through generate-extract."""
+    logging.info(f"Creating for {template}")
+    ke = SPIRESEngine(template, **kwargs)
+    logging.debug(f"Input entity: {entity}")
+    adapter = get_adapter(ontology)
+    for results in ke.iteratively_generate_and_extract(
+        entity,
+        db,
+        iteration_slots=list(iteration_slot),
+        max_iterations=max_iterations,
+        adapter=adapter,
+        clear=clear,
+    ):
+        write_extraction(results, output, output_format)
 
 
 @main.command()
