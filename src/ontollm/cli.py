@@ -12,8 +12,6 @@ from typing import List, Optional
 
 import click
 import jsonlines
-# TODO Remove dependency on openai
-import openai
 import yaml
 from oaklib import get_adapter
 from oaklib.cli import query_terms_iterator
@@ -747,8 +745,7 @@ def embed(text, context, output, model, output_format, **kwargs):
         raise ValueError("Text must be passed")
     if model is None:
         model = "text-embedding-ada-002"
-    # TODO Make some other client the default
-    client = OpenAIClient(model=model)
+    client = HFHubClient(model=model)
     resp = client.embeddings(text)
     print(resp)
 
@@ -777,8 +774,7 @@ def text_similarity(text, context, output, model, output_format, **kwargs):
     print(text2)
     if model is None:
         model = "text-embedding-ada-002"
-    # TODO Make some other client the default
-    client = OpenAIClient(model=model)
+    client = HFHubClient(model=model)
     sim = client.similarity(text1, text2, model=model)
     print(sim)
 
@@ -807,8 +803,7 @@ def text_distance(text, context, output, model, output_format, **kwargs):
     print(text2)
     if model is None:
         model = "text-embedding-ada-002"
-    # TODO Make some other client the default
-    client = OpenAIClient(model=model)
+    client = HFHubClient(model=model)
     sim = client.euclidean_distance(text1, text2, model=model)
     print(sim)
 
@@ -1154,15 +1149,6 @@ def fill(template, object: str, examples, output, output_format, **kwargs):
     logging.debug(f"Input object: {object}")
     results = ke.generalize(object, examples)
     output.write(yaml.dump(results.dict()))
-
-
-@main.command()
-#TODO Remove the function openai_models
-def openai_models(**kwargs):
-    """List OpenAI models for prompt completion."""
-    ai = OpenAIClient()
-    for model in openai.Model.list():
-        print(model)
 
 
 @main.command()
