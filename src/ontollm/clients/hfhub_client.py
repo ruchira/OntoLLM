@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from langchain import HuggingFaceHub, PromptTemplate, LLMChain
 import numpy as np
 from oaklib.utilities.apikey_manager import get_apikey_value
+from sentence_transformers import SentenceTransformer
 
 # Note: See https://huggingface.co/models?pipeline_tag=text-generation&sort=downloads
 # for all relevant models
@@ -14,10 +15,17 @@ from oaklib.utilities.apikey_manager import get_apikey_value
 class HFHubClient:
     """A client for the HuggingFace Hub API."""
 
-    try:
-        api_key = get_apikey_value("hfhub-key")
-    except ValueError:
-        logging.info("HuggingFace Hub API key not found. Using models locally.")
+    def __init__(self):
+        self.api_key = None
+        self.models_by_name = {}
+        self.modelnames_by_model = {}
+        self.sentence_transformers_by_name = {}
+
+    def __post_init__(self):
+        try:
+            self.api_key = get_apikey_value("hfhub-key")
+        except ValueError:
+            logging.info("HuggingFace Hub API key not found. Using models locally.")
 
     def get_model(self, modelname: str) -> HuggingFaceHub:
         """Retreive a model from the Hub, given its repository name.
@@ -31,7 +39,10 @@ class HFHubClient:
                                huggingfacehub_api_token=self.api_key,
                                task="text-generation"
                                )
-
+        self.models_by_name[modelname] = model
+        self.modelnames_by_model[model] = modelname
+        self.sentence_transformers_by_name[modelname] \
+                = SentenceTransformer(modelname)
         return model
 
     def query_hf_model(self, llm, prompt_text):
@@ -51,6 +62,21 @@ class HFHubClient:
             raw_output = ""
 
         return raw_output
+
+    def embeddings(self, text: str, modelname: str = None):
+        if modelname is None:
+            modelname = 'distilroberta-base'
+        if modelname not in self.sentence_transformers_by_name:
+            self.get_model(modelname)
+        sentence_transformer = sentence_transformers_by_name[modelname]
+        embedding = sentence_transformer.encode(text)
+        return embedding
+
+    def similarity(self, text1: str, text2: str, **kwargs):
+        a1 = self.embeddings(text1, **kwargs)
+        a2 = self.embeddings(text2, **kwargs)
+        logger.debug(f"similarity: {a1[0:10]}... x {a2[0:10]}... // ({len(a1)} x {len(a2)})")
+        return np.dot(a1, a2) / (np.linalg.norm(a1) * np.linalg.norm(a2))
 
     def euclidean_distance(self, text1: str, text2: str, **kwargs):
         a1 = self.embeddings(text1, **kwargs)
