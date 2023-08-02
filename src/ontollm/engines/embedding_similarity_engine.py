@@ -37,7 +37,7 @@ class SimilarityEngine(KnowledgeEngine):
         """Get similarity."""
         t1 = self.entity_text(entity1)
         t2 = self.entity_text(entity2)
-        client = LLMClient()
+        client = HFHubClient()
         score = client.similarity(t1, t2)
         obj = EmbeddingSimilarity(
             subject_id=entity1, object_id=entity2, embedding_cosine_similarity=score
@@ -49,7 +49,7 @@ class SimilarityEngine(KnowledgeEngine):
 
     def search(self, entity1: str, entities: List[str]) -> Iterable[EmbeddingSimilarity]:
         """Get similarity."""
-        client = LLMClient()
+        client = HFHubClient()
         t1 = self.entity_text(entity1)
         sims = []
         for entity2 in entities:

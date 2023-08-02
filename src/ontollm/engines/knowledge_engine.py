@@ -23,7 +23,7 @@ from oaklib.interfaces import MappingProviderInterface, TextAnnotatorInterface
 from oaklib.utilities.subsets.value_set_expander import ValueSetExpander
 
 from ontollm import DEFAULT_MODEL
-from ontollm.clients import LLMClient
+from ontollm.clients import HFHubClient
 from ontollm.templates.core import ExtractionResult, NamedEntity
 
 this_path = Path(__file__).parent
@@ -114,7 +114,7 @@ class KnowledgeEngine(ABC):
     labelers: List[BasicOntologyInterface] = None
     """Labelers that map CURIEs to labels"""
 
-    client: LLMClient = None
+    client: HFHubClient = None
     """All calls to LLMs are delegated through this client"""
 
     dictionary: Dict[str, str] = field(default_factory=dict)
@@ -571,4 +571,4 @@ class KnowledgeEngine(ABC):
         return resultset[0]
 
     def set_up_client(self):
-        self.client = LLMClient(model=self.model)
+        self.client = HFHubClient(model=self.model)

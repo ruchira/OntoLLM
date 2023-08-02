@@ -23,7 +23,7 @@ from oaklib.interfaces.obograph_interface import OboGraphInterface
 # TODO Change tiktoken to a Huggingface tokenizer
 from tiktoken import Encoding
 
-from ontollm.clients import LLMClient
+from ontollm.clients import HFHubClient
 from ontollm.engines.knowledge_engine import FIELD, KnowledgeEngine
 from ontollm.io.yaml_wrapper import dump_minimal_yaml
 from ontollm.templates.halo import Ontology, OntologyElement
@@ -76,7 +76,7 @@ class HALOEngine(KnowledgeEngine):
 
     def __post_init__(self):
         self.template_class = self._get_template_class("halo.OntologyElement")
-        self.client = LLMClient(model=self.engine)
+        self.client = HFHubClient(model=self.engine)
 
     def seed(self, seed_ontology: Ontology):
         """Seed the engine with an initial ontology.
