@@ -24,8 +24,7 @@ from sssom.util import to_mapping_set_dataframe
 
 import ontollm.ontex.extractor as extractor
 from ontollm import MODELS, DEFAULT_MODEL, __version__
-# TODO Remove dependency on OpenAIClient
-from ontollm.clients import OpenAIClient
+from ontollm.clients import HFHubClient
 from ontollm.clients.pubmed_client import PubmedClient
 from ontollm.clients.soup_client import SoupClient
 from ontollm.clients.wikipedia_client import WikipediaClient
