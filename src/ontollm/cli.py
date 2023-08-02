@@ -795,7 +795,7 @@ def text_similarity(text, context, output, model, output_format, **kwargs):
 )
 @click.argument("text", nargs=-1)
 def text_distance(text, context, output, model, output_format, **kwargs):
-    """Embed text, calculate euclidian distance between embeddings."""
+    """Embed text, calculate euclidean distance between embeddings."""
     if not text:
         raise ValueError("Text must be passed")
     text = list(text)
@@ -810,7 +810,7 @@ def text_distance(text, context, output, model, output_format, **kwargs):
         model = "text-embedding-ada-002"
     # TODO Make some other client the default
     client = OpenAIClient(model=model)
-    sim = client.euclidian_distance(text1, text2, model=model)
+    sim = client.euclidean_distance(text1, text2, model=model)
     print(sim)
 
 
