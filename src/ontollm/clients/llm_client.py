@@ -20,13 +20,7 @@ class LLMClient:
     # max_tokens: int = field(default_factory=lambda: 3000)
     model: str = field(default_factory=lambda: "gpt-3.5-turbo")
     cache_db_path: str = None
-    api_key: str = None
     interactive: bool = None
-
-    def __post_init__(self):
-        if not self.api_key:
-            self.api_key = get_apikey_value("openai")
-        openai.api_key = self.api_key
 
     def complete(self, prompt, max_tokens=3000, **kwargs) -> str:
         engine = self.model
