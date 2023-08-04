@@ -2,6 +2,7 @@
 
 import logging
 
+# TODO: Replace langchain with simpleaichat
 from langchain import LLMChain, PromptTemplate
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.llms import GPT4All
