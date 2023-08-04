@@ -1,12 +1,12 @@
 """
-GGML-based knowledge extractor class.
+gpt4all-based knowledge extractor class.
 
 Like the SPIRES implementation seen in spires_engine.py,
 this process constructs prompt-completions in which
 a pseudo-YAML structure is requested and the YAML
 structure corresponds to a template class.
 
-This class is intended for use with GGML-format models
+This class is intended for use with models
 such as those released by GPT4All (https://gpt4all.io/).
 """
 import logging
@@ -17,7 +17,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import pydantic.v1
 from linkml_runtime.linkml_model import ClassDefinition, SlotDefinition
 
-from ontollm.engines.knowledge_engine import (
+from ontogpt.engines.knowledge_engine import (
     ANNOTATION_KEY_PROMPT,
     ANNOTATION_KEY_PROMPT_SKIP,
     EXAMPLE,
@@ -26,8 +26,8 @@ from ontollm.engines.knowledge_engine import (
     KnowledgeEngine,
     chunk_text,
 )
-from ontollm.templates.core import ExtractionResult
-from ontollm.utils.gpt4all_runner import chain_gpt4all_model, set_up_gpt4all_model
+from ontogpt.templates.core import ExtractionResult
+from ontogpt.utils.gpt4all_runner import chain_gpt4all_model, set_up_gpt4all_model
 
 this_path = Path(__file__).parent
 
@@ -37,7 +37,7 @@ RESPONSE_DICT = Dict[FIELD, Union[RESPONSE_ATOM, List[RESPONSE_ATOM]]]
 
 
 @dataclass
-class GGMLEngine(KnowledgeEngine):
+class GPT4AllEngine(KnowledgeEngine):
     """Knowledge extractor for GGML chat models."""
 
     sentences_per_window: Optional[int] = None
