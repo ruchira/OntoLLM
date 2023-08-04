@@ -21,7 +21,7 @@ from sssom.parsers import parse_sssom_table, to_mapping_set_document
 from sssom.util import to_mapping_set_dataframe
 
 import ontollm.ontex.extractor as extractor
-from ontollm import DEFAULT_MODEL, MODELS, __version__
+from ontollm import MODELS, DEFAULT_MODEL, __version__
 from ontollm.clients import HFHubClient
 from ontollm.clients.pubmed_client import PubmedClient
 from ontollm.clients.soup_client import SoupClient
@@ -29,10 +29,10 @@ from ontollm.clients.wikipedia_client import WikipediaClient
 from ontollm.engines import create_engine
 from ontollm.engines.embedding_similarity_engine import SimilarityEngine
 from ontollm.engines.enrichment import EnrichmentEngine
-from ontollm.engines.generic_engine import GenericEngine, QuestionCollection
 from ontollm.engines.ggml_engine import GGMLEngine
+from ontollm.engines.generic_engine import GenericEngine, QuestionCollection
 from ontollm.engines.halo_engine import HALOEngine
-from ontollm.engines.hfhub_engine import HFHubEngine
+#from ontollm.engines.hfhub_engine import HFHubEngine
 from ontollm.engines.knowledge_engine import KnowledgeEngine
 from ontollm.engines.mapping_engine import MappingEngine
 from ontollm.engines.pheno_engine import PhenoEngine
@@ -284,12 +284,13 @@ def extract(
             ke.client.skip_annotators = settings.skip_annotators
 
     elif model_source == "GPT4All":
-        model_path = get_model(selectmodel["url"])
+        model_path = get_model(selectmodel["alternative_names"][0])
         ke = GGMLEngine(template=template, local_model=model_path, **kwargs)
 
     elif model_source == "HuggingFace Hub":
-        hf_repo_name = selectmodel["hf_repo_name"]
-        ke = HFHubEngine(template=template, local_model=hf_repo_name, **kwargs)
+        raise NotImplementedError("HF Hub support temporarily disabled. Sorry!")
+        #hf_repo_name = selectmodel["hf_repo_name"]
+        #ke = HFHubEngine(template=template, local_model=hf_repo_name, **kwargs)
 
     if dictionary:
         ke.load_dictionary(dictionary)
@@ -1376,7 +1377,7 @@ def list_templates():
 @main.command()
 def list_models():
     """List all available models."""
-    print("Model Name\tProvider\tAlternative Names\tStatus")
+    print("Model Name\tProvider\tAlternative Names\tStatus\tDisk Space\tSystem Memory")
     for model in MODELS:
         primary_name = model["name"]
         provider = model["provider"]
@@ -1387,8 +1388,10 @@ def list_models():
             status = "Not Implemented"
         else:
             status = "Implemented"
+        disk = model["requirements"]["diskspace"]
+        memory = model["requirements"]["memory"]
 
-        print(f"{primary_name}\t{provider}\t{alternative_names}\t{status}")
+        print(f"{primary_name}\t{provider}\t{alternative_names}\t{status}\t{disk}\t{memory}")
 
 
 if __name__ == "__main__":
