@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
 
-import pydantic
+import pydantic.v1
 # TODO Change tiktoken to a Huggingface tokenizer
 import tiktoken
 import yaml

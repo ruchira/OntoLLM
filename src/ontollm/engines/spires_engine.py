@@ -15,7 +15,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterator, List, Optional, Tuple, Union
 
-import pydantic
+import pydantic.v1
 import yaml
 from linkml_runtime.linkml_model import ClassDefinition, SlotDefinition
 from oaklib import BasicOntologyInterface

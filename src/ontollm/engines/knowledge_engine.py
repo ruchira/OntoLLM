@@ -10,7 +10,7 @@ from typing import Dict, Iterator, List, Optional, TextIO, Union
 from urllib.parse import quote
 
 import inflection
-import pydantic
+import pydantic.v1
 # TODO: Change tiktoken to a HuggingFace tokenizer
 import tiktoken
 import yaml

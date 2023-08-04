@@ -3,8 +3,8 @@ from __future__ import annotations
 import sys
 from datetime import date, datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
-
+from typing import List, Dict, Optional, Any, Union, Literal
+from pydantic.v1 import BaseModel as BaseModel, Field
 from linkml_runtime.linkml_model import Decimal
 from pydantic import BaseModel as BaseModel
 from pydantic import Field
