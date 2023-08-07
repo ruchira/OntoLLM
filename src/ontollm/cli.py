@@ -21,7 +21,7 @@ from sssom.parsers import parse_sssom_table, to_mapping_set_document
 from sssom.util import to_mapping_set_dataframe
 
 import ontollm.ontex.extractor as extractor
-from ontollm import MODELS, DEFAULT_MODEL, __version__
+from ontollm import DEFAULT_MODEL, MODELS, __version__
 from ontollm.clients import HFHubClient
 from ontollm.clients.pubmed_client import PubmedClient
 from ontollm.clients.soup_client import SoupClient
@@ -29,10 +29,11 @@ from ontollm.clients.wikipedia_client import WikipediaClient
 from ontollm.engines import create_engine
 from ontollm.engines.embedding_similarity_engine import SimilarityEngine
 from ontollm.engines.enrichment import EnrichmentEngine
-from ontollm.engines.gpt4all_engine import GPT4AllEngine
 from ontollm.engines.generic_engine import GenericEngine, QuestionCollection
+from ontollm.engines.gpt4all_engine import GPT4AllEngine
 from ontollm.engines.halo_engine import HALOEngine
-#from ontollm.engines.hfhub_engine import HFHubEngine
+
+# from ontollm.engines.hfhub_engine import HFHubEngine
 from ontollm.engines.knowledge_engine import KnowledgeEngine
 from ontollm.engines.mapping_engine import MappingEngine
 from ontollm.engines.pheno_engine import PhenoEngine
@@ -50,6 +51,7 @@ from ontollm.utils.gene_set_utils import (
     fill_missing_gene_set_values,
     parse_gene_set,
 )
+from ontollm.utils.gpt4all_runner import chain_gpt4all_model, set_up_gpt4all_model
 
 __all__ = [
     "main",
@@ -113,9 +115,10 @@ def write_extraction(
             output = _as_text_writer(output)
             output.write(dump_minimal_yaml(results))
 
+
 def get_model_by_name(modelname: str):
     """Retrieve a model name and metadata from those available.
-    
+
     Returns a dict describing the selected model."""
     found = False
     for knownmodel in MODELS:
@@ -128,7 +131,7 @@ def get_model_by_name(modelname: str):
             f"""Model name not recognized or not supported yet. Using default, {DEFAULT_MODEL}.
             See all models with `ontogpt list-models`"""
         )
-    
+
     return selectmodel
 
 
@@ -297,8 +300,8 @@ def extract(
 
     elif model_source == "HuggingFace Hub":
         raise NotImplementedError("HF Hub support temporarily disabled. Sorry!")
-        #hf_repo_name = selectmodel["hf_repo_name"]
-        #ke = HFHubEngine(template=template, local_model=hf_repo_name, **kwargs)
+        # hf_repo_name = selectmodel["hf_repo_name"]
+        # ke = HFHubEngine(template=template, local_model=hf_repo_name, **kwargs)
 
     if dictionary:
         ke.load_dictionary(dictionary)
@@ -1360,6 +1363,7 @@ def clinical_notes(
     description,
     sections,
     output,
+    model,
     output_format,
     **kwargs,
 ):
@@ -1372,12 +1376,21 @@ def clinical_notes(
          --sections medications --sections "vital signs"
 
     """
-    # TODO Use some other client
-    c = OpenAIClient()
+
     prompt = "create mock clinical notes for a patient like this: " + description
     if sections:
         prompt += " including sections: " + ", ".join(sections)
-    results = c.complete(prompt)
+
+    if not model:
+        model = DEFAULT_MODEL
+    selectmodel = get_model_by_name(model)
+    model_source = selectmodel["provider"]
+    model_name = selectmodel["alternative_names"][0]
+
+    if model_source == "GPT4All":
+        c = set_up_gpt4all_model(modelname=model_name)
+        results = chain_gpt4all_model(model=c, prompt_text=prompt)
+
     print(results)
     output.write(results)
 
