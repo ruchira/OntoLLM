@@ -23,6 +23,7 @@ inflect = ">=6.0.2"
 bioc = ">=2.0.post5"
 linkml = ">=1.4.10"
 wikipedia = ">=1.4.0"
+# TODO Remove dependence on tiktoken
 tiktoken = ">=0.3.3"
 airium = ">=0.2.5"
 httpx = ">=0.23.3"
