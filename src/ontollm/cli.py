@@ -1256,13 +1256,25 @@ def fill(template, object: str, examples, output, output_format, **kwargs):
 @output_option_txt
 @output_format_options
 @click.argument("input")
-def complete(input, output, output_format, **kwargs):
+def complete(model, input, output, output_format, **kwargs):
     """Prompt completion."""
-    # TODO Use some other client
-    ai = OpenAIClient()
+    if not model:
+        model = DEFAULT_MODEL
+    selectmodel = get_model_by_name(model)
+    model_source = selectmodel["provider"]
+    model_name = selectmodel["alternative_names"][0]
+
     text = open(input).read()
-    payload = ai.complete(text)
-    print(payload)
+
+    if model_source == "OpenAI":
+        c = OpenAIClient(model=model_name)
+        results = c.complete(text)
+
+    elif model_source == "GPT4All":
+        c = set_up_gpt4all_model(modelname=model_name)
+        results = chain_gpt4all_model(model=c, prompt_text=text)
+
+    output.write(results)
 
 
 @main.command()
@@ -1287,8 +1299,13 @@ def parse(template, input):
 @click.option("-D", "database", help="Path to sqlite database.")
 def dump_completions(model, match, database, output, output_format):
     """Dump cached completions."""
-    # TODO Use some other client
-    client = OpenAIClient()
+
+    if model:
+        raise NotImplementedError("Caching not currently enabled for this model.")
+    else:
+        # TODO Use some other client
+        client = OpenAIClient()
+
     if database:
         client.cache_db_path = database
     if output_format == "jsonl":
@@ -1336,8 +1353,11 @@ def convert_examples(input, output):
     help="number of iterations to cycle through.",
 )
 @click.argument("terms", nargs=-1)
-def halo(input, context, terms, output, **kwargs):
+def halo(model, input, context, terms, output, **kwargs):
     """Run HALO over inputs."""
+    if model:
+        raise NotImplementedError("HALO not currently supported for this model.")
+
     engine = HALOEngine()
     engine.seed_from_file(input)
     if context is None:
