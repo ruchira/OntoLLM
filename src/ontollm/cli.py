@@ -119,7 +119,8 @@ def write_extraction(
 def get_model_by_name(modelname: str):
     """Retrieve a model name and metadata from those available.
 
-    Returns a dict describing the selected model."""
+    Returns a dict describing the selected model.
+    """
     found = False
     for knownmodel in MODELS:
         if modelname in knownmodel["alternative_names"] or modelname == knownmodel["name"]:
@@ -1396,7 +1397,6 @@ def clinical_notes(
          --sections medications --sections "vital signs"
 
     """
-
     prompt = "create mock clinical notes for a patient like this: " + description
     if sections:
         prompt += " including sections: " + ", ".join(sections)
