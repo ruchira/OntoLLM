@@ -695,9 +695,16 @@ def web_extract(template, url, output, output_format, **kwargs):
 @click.option("--auto-prefix", default="AUTO", help="Prefix to use for auto-generated classes.")
 @model_option
 @click.argument("url")
-def recipe_extract(url, recipes_urls_file, dictionary, output, output_format, **kwargs):
+def recipe_extract(model, url, recipes_urls_file, dictionary, output, output_format, **kwargs):
     """Extract from recipe on the web."""
-    from recipe_scrapers import scrape_me
+    try:
+        from recipe_scrapers import scrape_me
+    except ModuleNotFoundError as e:
+        logging.error(
+            f"Did not find recipe_scrapers. Try: poetry install extras=recipes. Error: {e}"
+        )
+
+    template = "recipe"
 
     if not model:
         model = DEFAULT_MODEL
@@ -724,9 +731,9 @@ def recipe_extract(url, recipes_urls_file, dictionary, output, output_format, **
                 raise ValueError(f"Found {len(urls)} URLs in {recipes_urls_file}")
             url = urls[0]
     scraper = scrape_me(url)
-    template = "recipe"
+
     logging.info(f"Creating for {template}")
-    
+
     if dictionary:
         ke.load_dictionary(dictionary)
     ingredients = "\n".join(scraper.ingredients())
@@ -750,7 +757,7 @@ def recipe_extract(url, recipes_urls_file, dictionary, output, output_format, **
 @click.argument("input")
 def convert(input, output, output_format, **kwargs):
     """Convert output format.
-    
+
     Primarily intended for use with recipe template.
     """
     if not model:
@@ -769,7 +776,7 @@ def convert(input, output, output_format, **kwargs):
 
     template = "recipe"
     logging.info(f"Creating for {template}")
-    
+
     cls = ke.template_pyclass
     with open(input, "r") as f:
         data = yaml.safe_load(f)
@@ -939,7 +946,9 @@ def enrichment(
         # TODO Make EnrichmentEngine work without OpenAI, and change the 
         # model_source here
         if model_source != "OpenAI":
-            raise NotImplementedError("Model not yet supported for gene enrichment or enrichment evaluation.")
+            raise NotImplementedError(
+                "Model not yet supported for gene enrichment or enrichment evaluation."
+            )
 
     if not genes and not input_file:
         raise ValueError("Either genes or input file must be passed")
@@ -1012,7 +1021,6 @@ def embed(text, context, output, model, output_format, **kwargs):
 
     if not text:
         raise ValueError("Text must be passed")
- 
     client = HFHubClient(model=model)
     resp = client.embeddings(text)
     print(resp)
@@ -1087,7 +1095,6 @@ def text_distance(text, context, output, model, output_format, **kwargs):
     text2 = " ".join(text[ix + 1 :])
     print(text1)
     print(text2)
-        
     client = HFHubClient(model=model)
     sim = client.euclidean_distance(text1, text2, model=model)
     print(sim)
@@ -1147,7 +1154,7 @@ def entity_similarity(terms, ontology, output, model, output_format, **kwargs):
         # TODO: Check if this message is no longer necessary?
         if model_source != "OpenAI":
             raise NotImplementedError("Model not yet supported for embeddings.")
-        
+
     if not terms:
         raise ValueError("terms must be passed")
     terms = list(terms)
@@ -1387,7 +1394,9 @@ def eval_enrichment(genes, input_file, number_to_drop, annotations_path, model, 
         # TODO Make EnrichmentEngine work without OpenAI, and change the 
         # model_source here
         if model_source != "OpenAI":
-            raise NotImplementedError("Model not yet supported for gene enrichment or enrichment evaluation.")
+            raise NotImplementedError(
+                "Model not yet supported for gene enrichment or enrichment evaluation."
+            )
 
     if not genes and not input_file:
         raise ValueError("Either genes or input file must be passed")
