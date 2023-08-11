@@ -594,6 +594,8 @@ def recipe_extract(url, recipes_urls_file, dictionary, output, output_format, **
         selectmodel = get_model_by_name(model)
         model_source = selectmodel["provider"]
 
+    # TODO Make SPIRESEngine work without OpenAI, and change the model_source
+    # here
     if model_source == "OpenAI":
         ke = SPIRESEngine(template, **kwargs)
         if settings.cache_db:
@@ -646,6 +648,8 @@ def convert(input, output, output_format, **kwargs):
     selectmodel = get_model_by_name(model)
     model_source = selectmodel["provider"]
 
+    # TODO Make SPIRESEngine work without OpenAI, and change the model_source
+    # here
     if model_source == "OpenAI":
         ke = SPIRESEngine(template, **kwargs)
 
@@ -680,6 +684,8 @@ def synonyms(model, term, context, output, output_format, **kwargs):
         selectmodel = get_model_by_name(model)
         model_source = selectmodel["provider"]
 
+        # TODO Make SynonymEngine work without OpenAI, and change the 
+        # model_source here
         if model_source != "OpenAI":
             raise NotImplementedError("Model not yet supported for this function.")
 
@@ -820,6 +826,8 @@ def enrichment(
         selectmodel = get_model_by_name(model)
         model_source = selectmodel["provider"]
 
+        # TODO Make EnrichmentEngine work without OpenAI, and change the 
+        # model_source here
         if model_source != "OpenAI":
             raise NotImplementedError("Model not yet supported for gene enrichment or enrichment evaluation.")
 
@@ -886,6 +894,7 @@ def embed(text, context, output, model, output_format, **kwargs):
         selectmodel = get_model_by_name(model)
         model_source = selectmodel["provider"]
 
+        # TODO: Check if this message is no longer necessary?
         if model_source != "OpenAI":
             raise NotImplementedError("Model not yet supported for embeddings.")
     else:
@@ -915,6 +924,7 @@ def text_similarity(text, context, output, model, output_format, **kwargs):
         selectmodel = get_model_by_name(model)
         model_source = selectmodel["provider"]
 
+        # TODO: Check if this message is no longer necessary?
         if model_source != "OpenAI":
             raise NotImplementedError("Model not yet supported for embeddings.")
     else:
@@ -951,6 +961,7 @@ def text_distance(text, context, output, model, output_format, **kwargs):
         selectmodel = get_model_by_name(model)
         model_source = selectmodel["provider"]
 
+        # TODO: Check if this message is no longer necessary?
         if model_source != "OpenAI":
             raise NotImplementedError("Model not yet supported for embeddings.")
     else:
@@ -1023,6 +1034,7 @@ def entity_similarity(terms, ontology, output, model, output_format, **kwargs):
         selectmodel = get_model_by_name(model)
         model_source = selectmodel["provider"]
 
+        # TODO: Check if this message is no longer necessary?
         if model_source != "OpenAI":
             raise NotImplementedError("Model not yet supported for embeddings.")
         
@@ -1262,6 +1274,8 @@ def eval_enrichment(genes, input_file, number_to_drop, annotations_path, model, 
         selectmodel = get_model_by_name(model)
         model_source = selectmodel["provider"]
 
+        # TODO Make EnrichmentEngine work without OpenAI, and change the 
+        # model_source here
         if model_source != "OpenAI":
             raise NotImplementedError("Model not yet supported for gene enrichment or enrichment evaluation.")
 
@@ -1325,6 +1339,8 @@ def fill(model, template, object: str, examples, output, output_format, **kwargs
     selectmodel = get_model_by_name(model)
     model_source = selectmodel["provider"]
 
+    # TODO Make SPIRESEngine work without OpenAI, and change the model_source 
+    # here
     if model_source == "OpenAI":
         ke = SPIRESEngine(template, **kwargs)
 
@@ -1357,6 +1373,7 @@ def complete(model, input, output, output_format, **kwargs):
 
     text = open(input).read()
 
+    # TODO: Check that we can get rid of OpenAI here
     if model_source == "OpenAI":
         c = OpenAIClient(model=model_name)
         results = c.complete(text)
@@ -1372,7 +1389,7 @@ def complete(model, input, output, output_format, **kwargs):
 @template_option
 @click.option("--input", "-i", type=click.File("r"), default=sys.stdin, help="Input file")
 def parse(template, input):
-    """Parse OpenAI results."""
+    """Parse LLM results."""
     logging.info(f"Creating for {template}")
     ke = SPIRESEngine(template)
     text = input.read()
