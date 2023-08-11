@@ -371,6 +371,8 @@ def iteratively_generate_extract(
     selectmodel = get_model_by_name(model)
     model_source = selectmodel["provider"]
 
+    # TODO Make SPIRESEngine work without OpenAI, and change the model_source
+    # here
     if model_source == "OpenAI":
         ke = SPIRESEngine(template, **kwargs)
         if settings.cache_db:
