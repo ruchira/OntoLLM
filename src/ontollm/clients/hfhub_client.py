@@ -2,7 +2,7 @@
 import logging
 
 from dataclasses import dataclass
-# TODO: Replace langchain with simpleaichat
+# TODO: Replace langchain, perhaps with llm
 from langchain import HuggingFaceHub, PromptTemplate, LLMChain
 import numpy as np
 from oaklib.utilities.apikey_manager import get_apikey_value
