@@ -29,3 +29,5 @@ Skipping 2b4e3cd, as our src/ontollm/models.yaml differs.
 Skipping 2e335a2, it is a merge of c53ed42 (above) and 0c6c739, which we have.
 
 Skipping ef28de1, it is a merge of 2e335a2 (above) and afc6b03, which we have.
+
+Skipping b43762b, it is a merge of 93dcd31 (above) and ef28de1, which we have.
