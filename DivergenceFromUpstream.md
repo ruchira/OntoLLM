@@ -7,11 +7,11 @@ As explained in README.md, OntoLLM is a derivative of OntoGPT, but with differen
 When comparing with upstream, the total number of commits we have checked and
 decided to either cherry-pick or skip is:
 
-77
+79
 
 Date of the last upstream commit checked:
 
-Aug 15, 2023
+Aug 17, 2023
 
 ## Individual commits
 
