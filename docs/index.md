@@ -79,7 +79,6 @@ where `extra_name` is one of the following:
 * `web` - dependencies for the web application
 * `recipes` - dependencies for recipe scraping and parsing
 * `gpt4all` - dependencies for loading LLMs from GPT4All
-* `textract` - the textract plugin
 * `huggingface` - dependencies for accessing LLMs from HuggingFace Hub, remotely or locally
 
 ## Examples

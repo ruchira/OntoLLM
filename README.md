@@ -73,7 +73,6 @@ where `extra_name` is one of the following:
 * `docs` - dependencies for building documentation
 * `web` - dependencies for the web application
 * `recipes` - dependencies for recipe scraping and parsing
-* `textract` - the textract plugin
 * `huggingface` - dependencies for accessing LLMs from HuggingFace Hub, remotely or locally
 
 For feature development and contributing to the package:

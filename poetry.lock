@@ -6436,27 +6436,6 @@ docs = ["myst-parser", "pydata-sphinx-theme", "sphinx"]
 test = ["pre-commit", "pytest (>=7.0)", "pytest-timeout"]
 
 [[package]]
-name = "textract"
-version = "1.5.0"
-description = "extract text from any document. no muss. no fuss."
-optional = true
-python-versions = "*"
-files = [
-    {file = "textract-1.5.0.tar.gz", hash = "sha256:0e73dd1679f817bf985dd08e9e8b7e34715bb116d6ec10285a9149a145c457d7"},
-]
-
-[package.dependencies]
-argcomplete = "*"
-beautifulsoup4 = "*"
-chardet = "*"
-docx2txt = "*"
-EbookLib = "*"
-python-pptx = ">=0.5.1"
-six = "*"
-SpeechRecognition = ">=3.1.0"
-xlrd = "*"
-
-[[package]]
 name = "textwrap3"
 version = "0.9.2"
 description = "textwrap from Python 3.6 backport (plus a few tweaks)"
@@ -7189,7 +7168,6 @@ docs = ["myst-parser", "sphinx", "sphinx-autodoc-typehints", "sphinx-click", "sp
 gpt4all = []
 huggingface = ["huggingface_hub"]
 recipes = ["recipe-scrapers"]
-textract = ["textract"]
 web = ["Jinja2", "fastapi", "uvicorn"]
 
 [metadata]

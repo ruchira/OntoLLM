@@ -156,12 +156,6 @@ prompt_template_option = click.option(
 recurse_option = click.option(
     "--recurse/--no-recurse", default=True, show_default=True, help="Recursively parse structures."
 )
-use_textract_options = click.option(
-    "--use-textract/--no-use-textract",
-    default=False,
-    show_default=True,
-    help="Use textract to extract text.",
-)
 output_option_wb = click.option(
     "-o", "--output", type=click.File(mode="wb"), default=sys.stdout, help="Output file."
 )
@@ -223,7 +217,6 @@ def main(verbose: int, quiet: bool, cache_db: str, skip_annotator):
 @output_option_wb
 @click.option("--dictionary")
 @output_format_options
-@use_textract_options
 @auto_prefix_option
 @click.option(
     "--set-slot-value",
@@ -241,7 +234,6 @@ def extract(
     output,
     output_format,
     set_slot_value,
-    use_textract,
     model,
     **kwargs,
 ):
@@ -276,12 +268,7 @@ def extract(
         text = sys.stdin.read()
     if inputfile and Path(inputfile).exists():
         logging.info(f"Input file: {inputfile}")
-        if use_textract:
-            import textract
-
-            text = textract.process(inputfile).decode("utf-8")
-        else:
-            text = open(inputfile, "r").read()
+        text = open(inputfile, "r").read()
         logging.info(f"Input text: {text}")
     elif inputfile and not Path(inputfile).exists():
         raise FileNotFoundError(f"Cannot find input file {inputfile}")
