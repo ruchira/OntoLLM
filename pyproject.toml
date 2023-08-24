@@ -92,7 +92,6 @@ huggingface = [
 
 [tool.poetry.group.dev.dependencies]
 jupyter = "^1.0.0"
-seaborn = "^0.12.2"
 papermill = "^2.4.0"
 
 [tool.poetry-dynamic-versioning]
