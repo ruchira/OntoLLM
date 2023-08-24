@@ -174,6 +174,12 @@ auto_prefix_option = click.option(
     default="AUTO",
     help="Prefix to use for auto-generated classes. Default is AUTO.",
 )
+show_prompt_option = click.option(
+    "--show-prompt/--no-show-prompt",
+    default=False,
+    show_default=True,
+    help="If set, show all prompts passed to model through an API.",
+)
 
 
 @click.group()
@@ -218,6 +224,7 @@ def main(verbose: int, quiet: bool, cache_db: str, skip_annotator):
 @click.option("--dictionary")
 @output_format_options
 @auto_prefix_option
+@show_prompt_option
 @click.option(
     "--set-slot-value",
     "-S",
@@ -235,6 +242,7 @@ def extract(
     output_format,
     set_slot_value,
     model,
+    show_prompt,
     **kwargs,
 ):
     """Extract knowledge from text guided by schema, using SPIRES engine.
@@ -837,6 +845,7 @@ def convert_geneset(input_file, output, output_format, fill, **kwargs):
 @output_option_txt
 @output_format_options
 @model_option
+@show_prompt_option
 @click.option(
     "--resolver", "-r", help="OAK selector for the gene ID resolver. E.g. sqlite:obo:hgnc"
 )
@@ -850,12 +859,6 @@ def convert_geneset(input_file, output, output_format, fill, **kwargs):
     default=True,
     show_default=True,
     help="If set, there must be a unique mappings from labels to IDs",
-)
-@click.option(
-    "--show-prompt/--no-show-prompt",
-    default=True,
-    show_default=True,
-    help="If set, show prompt passed to model",
 )
 @click.option(
     "--input-file",
