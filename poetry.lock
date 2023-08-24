@@ -295,23 +295,6 @@ files = [
 python-dateutil = ">=2.7.0"
 
 [[package]]
-name = "asttokens"
-version = "2.2.1"
-description = "Annotate AST trees with source code positions"
-optional = false
-python-versions = "*"
-files = [
-    {file = "asttokens-2.2.1-py2.py3-none-any.whl", hash = "sha256:6b0ac9e93fb0335014d382b8fa9b3afa7df546984258005da0b9e7095b3deb1c"},
-    {file = "asttokens-2.2.1.tar.gz", hash = "sha256:4622110b2a6f30b77e1473affaa97e711bc2f07d3f10848420ff1898edbe94f3"},
-]
-
-[package.dependencies]
-six = "*"
-
-[package.extras]
-test = ["astroid", "pytest"]
-
-[[package]]
 name = "async-timeout"
 version = "4.0.2"
 description = "Timeout context manager for asyncio programs"
@@ -1143,7 +1126,7 @@ files = [
 ]
 
 [package.extras]
-tests = ["asttokens", "littleutils", "pytest", "rich"]
+tests = ["littleutils", "pytest", "rich"]
 
 [[package]]
 name = "extruct"
@@ -6248,7 +6231,6 @@ files = [
 ]
 
 [package.dependencies]
-asttokens = ">=2.1.0"
 executing = ">=1.2.0"
 pure-eval = "*"
 
