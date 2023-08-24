@@ -337,17 +337,6 @@ files = [
 ]
 
 [[package]]
-name = "bcp47"
-version = "0.0.4"
-description = "Language tags made easy"
-optional = false
-python-versions = "*"
-files = [
-    {file = "bcp47-0.0.4-py3-none-any.whl", hash = "sha256:309d3bbaef8d6c9ac59d37ba2167cc6620b4e7467ec8f1e09641b659bb1c0c6d"},
-    {file = "bcp47-0.0.4.tar.gz", hash = "sha256:4878d2f3e697ef39ef3891a147280705e4377d5a8d7eb0702129b8d4a3718702"},
-]
-
-[[package]]
 name = "beautifulsoup4"
 version = "4.11.2"
 description = "Screen-scraping library"
@@ -1478,7 +1467,6 @@ files = [
 ]
 
 [package.dependencies]
-bcp47 = "*"
 jsonasobj = "*"
 pyjsg = ">=0.11.6"
 rdflib = ">=6.2.0,<8"
