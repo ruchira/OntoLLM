@@ -154,28 +154,6 @@ files = [
 ]
 
 [[package]]
-name = "altair"
-version = "4.2.2"
-description = "Altair: A declarative statistical visualization library for Python."
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "altair-4.2.2-py3-none-any.whl", hash = "sha256:8b45ebeaf8557f2d760c5c77b79f02ae12aee7c46c27c06014febab6f849bc87"},
-    {file = "altair-4.2.2.tar.gz", hash = "sha256:39399a267c49b30d102c10411e67ab26374156a84b1aeb9fcd15140429ba49c5"},
-]
-
-[package.dependencies]
-entrypoints = "*"
-jinja2 = "*"
-jsonschema = ">=3.0"
-numpy = "*"
-pandas = ">=0.18"
-toolz = "*"
-
-[package.extras]
-dev = ["black", "docutils", "flake8", "ipython", "m2r", "mistune (<2.0.0)", "pytest", "recommonmark", "sphinx", "vega-datasets"]
-
-[[package]]
 name = "aniso8601"
 version = "9.0.1"
 description = "A library for parsing ISO 8601 strings."
@@ -6344,7 +6322,6 @@ files = [
 ]
 
 [package.dependencies]
-altair = ">=3.2.0,<5"
 blinker = ">=1.0.0"
 cachetools = ">=4.0"
 click = ">=7.0"
