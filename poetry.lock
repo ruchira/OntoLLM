@@ -406,21 +406,6 @@ watchdog = "*"
 test = ["bandit", "collective.checkdocs", "coverage", "dnspython", "flake8", "pandas", "pygments", "pylint", "pymongo", "pymongo-inmemory", "pytest", "pytest-cov", "safety"]
 
 [[package]]
-name = "cattrs"
-version = "22.2.0"
-description = "Composable complex class support for attrs and dataclasses."
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "cattrs-22.2.0-py3-none-any.whl", hash = "sha256:bc12b1f0d000b9f9bee83335887d532a1d3e99a833d1bf0882151c97d3e68c21"},
-    {file = "cattrs-22.2.0.tar.gz", hash = "sha256:f0eed5642399423cf656e7b66ce92cdc5b963ecafd041d1b24d136fdde7acf6d"},
-]
-
-[package.dependencies]
-attrs = ">=20"
-exceptiongroup = {version = "*", markers = "python_version < \"3.11\""}
-
-[[package]]
 name = "certifi"
 version = "2022.12.7"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -5214,7 +5199,6 @@ files = [
 
 [package.dependencies]
 attrs = ">=21.2"
-cattrs = ">=22.2"
 platformdirs = ">=2.5"
 requests = ">=2.22"
 url-normalize = ">=1.4"
