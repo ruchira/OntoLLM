@@ -1,6 +1,6 @@
 # Commits that OntoLLM has skipped
 
-As explained in README.md, OntoLLM is a derivative of OntoGPT, but with different criteria as to which models to include.  Therefore OntoLLM is closely tracking OntoGPT, but with the use of "git cherry-pick" rather than "git merge", so as to be able to easily skip the occasional commit that is inapplicable in the case of OntoLLM.  We review each upstream commit before deciding to include it in OntoLLM.  Below is a record of the commits that are skipped.  Note that many of the commits that OntoLLM does cherry-pick from OntoGPT involve merge conflicts which are resolved manually. Since git cherry-pick comprises much of the same functionality as git merge, we also skip various upstream commits that are just merges.
+As explained in the [README](README.md), OntoLLM is a derivative of OntoGPT, but with different criteria as to which models to include.  Therefore OntoLLM is closely tracking OntoGPT, but with the use of "git cherry-pick" rather than "git merge", so as to be able to easily skip the occasional commit that is inapplicable in the case of OntoLLM.  We review each upstream commit before deciding to include it in OntoLLM.  Below is a record of the commits that are skipped.  Note that many of the commits that OntoLLM does cherry-pick from OntoGPT involve merge conflicts which are resolved manually. Since git cherry-pick comprises much of the same functionality as git merge, we also skip various upstream commits that are just merges.
 
 ## Number of commits checked
 
