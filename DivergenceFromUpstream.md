@@ -7,11 +7,11 @@ As explained in README.md, OntoLLM is a derivative of OntoGPT, but with differen
 When comparing with upstream, the total number of commits we have checked and
 decided to either cherry-pick or skip is:
 
-83
+92
 
 Date of the last upstream commit checked:
 
-Aug 23, 2023
+Aug 25, 2023
 
 ## Individual commits
 
@@ -48,3 +48,11 @@ Skipping b43762b, it is a merge of 93dcd31 (above) and ef28de1, which we have.
 Skipping 63ddc0c, it is a merge of b43762b (above) and fc9b8f7, which we have.
 
 Skipping ac4c060, it is just a merge and we have both of its parents already.
+
+Skipping c9b8d34, it pertains only to the OpenAI client.
+
+Skipping a859db7, it is just a merge and we have both of its parents already.
+
+Skipping cb9d8ba, it pertains only to the OpenAI client.
+
+Skipping 4849f4c, it is just a merge which pertains only to the OpenAI client.
