@@ -9,7 +9,7 @@ from oaklib import get_implementation_from_shorthand
 from oaklib.datamodels.obograph import LogicalDefinitionAxiom
 from oaklib.datamodels.vocabulary import IS_A
 from oaklib.interfaces.obograph_interface import OboGraphInterface
-from pydantic.v1 import BaseModel
+from pydantic import BaseModel
 
 from ontollm.engines.spires_engine import SPIRESEngine
 from ontollm.evaluation.evaluation_engine import SimilarityScore, SPIRESEvaluationEngine

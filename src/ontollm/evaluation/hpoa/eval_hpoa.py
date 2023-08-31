@@ -11,7 +11,7 @@ from oaklib import BasicOntologyInterface, get_implementation_from_shorthand
 from oaklib.datamodels.search import SearchConfiguration
 from oaklib.datamodels.search_datamodel import SearchProperty
 from oaklib.interfaces import SearchInterface
-from pydantic.v1 import BaseModel
+from pydantic import BaseModel
 
 from ontollm.clients.pubmed_client import PubmedClient
 from ontollm.engines.spires_engine import SPIRESEngine

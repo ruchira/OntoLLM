@@ -9,7 +9,7 @@ from typing import Dict, List, Optional, Tuple, Union
 
 from jinja2 import Template
 from oaklib import BasicOntologyInterface, get_adapter
-from pydantic.v1 import BaseModel
+from pydantic import BaseModel
 
 from ontollm import MODELS
 from ontollm.engines.knowledge_engine import KnowledgeEngine

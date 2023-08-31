@@ -9,7 +9,7 @@ from jinja2 import Template
 from oaklib import get_adapter
 from oaklib.datamodels.text_annotator import TextAnnotationConfiguration
 from oaklib.interfaces import MappingProviderInterface, TextAnnotatorInterface
-from pydantic.v1 import BaseModel
+from pydantic import BaseModel
 
 from ontollm.engines.knowledge_engine import KnowledgeEngine
 from ontollm.io.yaml_wrapper import dump_minimal_yaml

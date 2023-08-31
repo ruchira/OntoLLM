@@ -21,7 +21,7 @@ from oaklib.interfaces.class_enrichment_calculation_interface import (
 )
 from oaklib.interfaces.obograph_interface import OboGraphInterface
 from oaklib.parsers.association_parser_factory import get_association_parser
-from pydantic.v1 import BaseModel
+from pydantic import BaseModel
 # TODO: Change tiktoken to a HuggingFace tokenizer
 from tiktoken import Encoding
 
