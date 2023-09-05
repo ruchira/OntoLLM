@@ -109,7 +109,7 @@ class SPIRESEngine(KnowledgeEngine):
         self, entity: str, show_prompt: bool = False, prompt_template: str = None, **kwargs
     ) -> ExtractionResult:
         """
-        Generate a description using GPT and then extract from it using SPIRES.
+        Generate a description using the LLM, then extract from it using SPIRES.
 
         :param entity:
         :param kwargs:
