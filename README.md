@@ -236,6 +236,7 @@ Define a schema (using a subset of [LinkML](https://linkml.io)) that describes t
 
 <details>
   <summary>example custom linkml data model</summary>
+ 
   ```yaml
   classes:
     MendelianDisease:
