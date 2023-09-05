@@ -1214,6 +1214,7 @@ def entity_similarity(terms, ontology, output, model, output_format, **kwargs):
 @click.option("--all-methods/--no-all-methods", default=False)
 @click.option("--explain/--no-explain", default=False)
 @click.option("--evaluate/--no-evaluate", default=False)
+@click.option("--max-gen-len", "-G", default=4097, type=click.INT)
 @click.argument("terms", nargs=-1)
 def reason(
     terms,
@@ -1226,6 +1227,7 @@ def reason(
     tsv_output,
     all_methods,
     evaluate,
+    max_gen_len,
     **kwargs,
 ):
     """Reason."""
@@ -1255,7 +1257,8 @@ def reason(
     else:
         for task in tc.tasks:
             task.include_explanations = explain
-    resultset = reasoner.reason_multiple(tc, evaluate=evaluate)
+    resultset = reasoner.reason_multiple(tc, max_gen_len=max_gen_len,
+                                         evaluate=evaluate)
     dump_minimal_yaml(resultset.dict(), file=output)
     if tsv_output:
         write_obj_as_csv(resultset.results, tsv_output)
