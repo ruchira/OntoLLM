@@ -53,7 +53,7 @@ class SPIRESEngine(KnowledgeEngine):
 
     sentences_per_window: Optional[int] = None
     """If set, this will split the text into chains of sentences,
-    where this determines the maximum number of sentences per chain.
+    where this value determines the maximum number of sentences per chain.
     The results are then merged together."""
 
     def extract_from_text(
