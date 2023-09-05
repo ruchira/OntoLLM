@@ -159,7 +159,7 @@ class KnowledgeEngine(ABC):
         self.encoding = self.tokenizer
 
     def extract_from_text(
-        self, text: str, cls: ClassDefinition = None, an_object: OBJECT = None
+        self, text: str, class_def: ClassDefinition = None, an_object: OBJECT = None
     ) -> ExtractionResult:
         raise NotImplementedError
 
@@ -198,7 +198,7 @@ class KnowledgeEngine(ABC):
         logger.info(f"Loaded {len(self.dictionary)}")
 
     # @abstractmethod
-    def synthesize(self, cls: ClassDefinition = None, an_object: OBJECT = None) -> ExtractionResult:
+    def synthesize(self, class_def: ClassDefinition = None, an_object: OBJECT = None) -> ExtractionResult:
         raise NotImplementedError
 
     def generalize(
@@ -235,16 +235,16 @@ class KnowledgeEngine(ABC):
         self.template_pyclass = mod.__dict__[class_name]
         self.schemaview = sv
         logger.info(f"Getting class for template {template}")
-        cls = None
+        class_def = None
         for c in sv.all_classes().values():
             if c.name == class_name:
-                cls = c
+                class_def = c
                 break
-        if not cls:
+        if not class_def:
             raise ValueError(f"Template {template} not found")
-        return cls
+        return class_def
 
-    def get_annotators(self, cls: ClassDefinition = None) -> List[BasicOntologyInterface]:
+    def get_annotators(self, class_def: ClassDefinition = None) -> List[BasicOntologyInterface]:
         """
         Get the annotators/labelers for a class.
 
@@ -256,16 +256,16 @@ class KnowledgeEngine(ABC):
         These are specified by linkml annotations within the template/schema;
         if the engine has a set of annotators specified these take precedence.
 
-        :param cls: schema class
+        :param class_def: schema class
         :return: list of annotations
         """
-        if self.annotators and cls.name in self.annotators:
-            annotators = self.annotators[cls.name]
+        if self.annotators and class_def.name in self.annotators:
+            annotators = self.annotators[class_def.name]
         else:
-            if ANNOTATION_KEY_ANNOTATORS not in cls.annotations:
-                logger.error(f"No annotators for {cls.name}")
+            if ANNOTATION_KEY_ANNOTATORS not in class_def.annotations:
+                logger.error(f"No annotators for {class_def.name}")
                 return []
-            annotators = cls.annotations[ANNOTATION_KEY_ANNOTATORS].value.split(", ")
+            annotators = class_def.annotations[ANNOTATION_KEY_ANNOTATORS].value.split(", ")
         logger.info(f" Annotators: {annotators} [will skip: {self.skip_annotators}]")
         annotators = []
         for annotator in annotators:
@@ -283,7 +283,7 @@ class KnowledgeEngine(ABC):
                 raise ValueError(f"Unknown annotator type {annotator}")
         return annotators
 
-    def promptable_slots(self, cls: Optional[ClassDefinition] = None) -> List[SlotDefinition]:
+    def promptable_slots(self, class_def: Optional[ClassDefinition] = None) -> List[SlotDefinition]:
         """
         List of all slots that are not skipped for purposes of prompting.
 
@@ -293,13 +293,13 @@ class KnowledgeEngine(ABC):
         - the source text used in extraction
         - other metadata that is outside what we might want to predict
 
-        :param cls:
+        :param class_def:
         :return:
         """
-        if cls is None:
-            cls = self.template_class
+        if class_def is None:
+            class_def = self.template_class
         sv = self.schemaview
-        return [s for s in sv.class_induced_slots(cls.name) if not self.slot_is_skipped(s)]
+        return [s for s in sv.class_induced_slots(class_def.name) if not self.slot_is_skipped(s)]
 
     def slot_is_skipped(self, slot: SlotDefinition) -> bool:
         sv = self.schemaview
@@ -313,37 +313,37 @@ class KnowledgeEngine(ABC):
         if the entity cannot be grounded and normalized, the original text is returned.
 
         :param text:
-        :param cls:
+        :param class_def:
         :return:
         """
         sv = self.schemaview
-        cls = sv.get_class(range)
-        if cls is None:
+        class_def = sv.get_class(range)
+        if class_def is None:
             return text
-        if ANNOTATION_KEY_EXAMPLES in cls.annotations:
-            examples = cls.annotations[ANNOTATION_KEY_EXAMPLES].value.split(", ")
+        if ANNOTATION_KEY_EXAMPLES in class_def.annotations:
+            examples = class_def.annotations[ANNOTATION_KEY_EXAMPLES].value.split(", ")
             examples = [x.lower() for x in examples]
             logger.debug(f"Will exclude if in list of examples: {examples}")
             if text.lower() in examples:
                 logger.warning(f"Likely a hallucination as it is the example set: {text}")
                 return f"LIKELY HALLUCINATION: {text}"
-        for obj_id in self.groundings(text, cls):
+        for obj_id in self.groundings(text, class_def):
             logger.info(f"Grounding {text} to {obj_id}; next step is to normalize")
-            for normalized_id in self.normalize_identifier(obj_id, cls):
+            for normalized_id in self.normalize_identifier(obj_id, class_def):
                 if not any(e for e in self.named_entities if e.id == normalized_id):
                     self.named_entities.append(NamedEntity(id=normalized_id, label=text))
                 logger.info(f"Normalized {text} with {obj_id} to {normalized_id}")
                 return normalized_id
-        logger.info(f"Could not ground and normalize {text} to {cls.name}")
+        logger.info(f"Could not ground and normalize {text} to {class_def.name}")
         if self.auto_prefix:
             obj_id = f"{self.auto_prefix}:{quote(text)}"
             if not any(e for e in self.named_entities if e.id == obj_id):
                 self.named_entities.append(NamedEntity(id=obj_id, label=text))
         else:
             obj_id = text
-        if ANNOTATION_KEY_RECURSE in cls.annotations:
-            logger.info(f"Using recursive strategy to parse: {text} to {cls.name}")
-            obj = self.extract_from_text(text, cls).extracted_object
+        if ANNOTATION_KEY_RECURSE in class_def.annotations:
+            logger.info(f"Using recursive strategy to parse: {text} to {class_def.name}")
+            obj = self.extract_from_text(text, class_def).extracted_object
             if obj:
                 if self.named_entities is None:
                     self.named_entities = []
@@ -354,16 +354,16 @@ class KnowledgeEngine(ABC):
                 self.named_entities.append(obj)
         return obj_id
 
-    def is_valid_identifier(self, input_id: str, cls: ClassDefinition) -> bool:
+    def is_valid_identifier(self, input_id: str, class_def: ClassDefinition) -> bool:
         sv = self.schemaview
-        if cls.id_prefixes:
+        if class_def.id_prefixes:
             if ":" not in input_id:
                 return False
             prefix, _ = input_id.split(":", 1)
-            if prefix not in cls.id_prefixes:
-                logger.debug(f"ID {input_id} not in prefixes {cls.id_prefixes}")
+            if prefix not in class_def.id_prefixes:
+                logger.debug(f"ID {input_id} not in prefixes {class_def.id_prefixes}")
                 return False
-        id_slot = sv.get_identifier_slot(cls.name)
+        id_slot = sv.get_identifier_slot(class_def.name)
         if id_slot and id_slot.pattern:
             id_regex = re.compile(id_slot.pattern)
             m = re.match(id_regex, input_id)
@@ -390,21 +390,21 @@ class KnowledgeEngine(ABC):
                 return False
         return True
 
-    def normalize_identifier(self, input_id: str, cls: ClassDefinition) -> Iterator[str]:
-        if self.is_valid_identifier(input_id, cls):
+    def normalize_identifier(self, input_id: str, class_def: ClassDefinition) -> Iterator[str]:
+        if self.is_valid_identifier(input_id, class_def):
             yield input_id
-        for obj_id in self.map_identifier(input_id, cls):
+        for obj_id in self.map_identifier(input_id, class_def):
             if obj_id == input_id:
                 continue
-            if self.is_valid_identifier(obj_id, cls):
+            if self.is_valid_identifier(obj_id, class_def):
                 yield obj_id
 
-    def map_identifier(self, input_id: str, cls: ClassDefinition) -> Iterator[str]:
+    def map_identifier(self, input_id: str, class_def: ClassDefinition) -> Iterator[str]:
         """
         Normalize an identifier to a preferred prefix.
 
         :param input_id:
-        :param cls:
+        :param class_def:
         :return:
         """
         if input_id.startswith("http://purl.bioontology.org/ontology"):
@@ -420,7 +420,7 @@ class KnowledgeEngine(ABC):
         if input_id.startswith("drugbank:"):
             input_id = input_id.replace("drugbank:", "DRUGBANK:")
         yield input_id
-        if not cls.id_prefixes:
+        if not class_def.id_prefixes:
             return
         if not self.mappers:
             return
@@ -431,7 +431,7 @@ class KnowledgeEngine(ABC):
             else:
                 raise ValueError(f"Unknown mapper type {mapper}")
 
-    def groundings(self, text: str, cls: ClassDefinition) -> Iterator[str]:
+    def groundings(self, text: str, class_def: ClassDefinition) -> Iterator[str]:
         """
         Ground the given text to element identifiers.
 
@@ -444,21 +444,21 @@ class KnowledgeEngine(ABC):
         - annotators are yielded next, in order in which they are specified in the schema
 
         :param text: text to ground, e.g. gene symbol
-        :param cls: schema class the ground object should instantiate
+        :param class_def: schema class the ground object should instantiate
         :return:
         """
-        logger.info(f"GROUNDING {text} using {cls.name}")
+        logger.info(f"GROUNDING {text} using {class_def.name}")
         id_matches = re.match(r"^(\S+):(\d+)$", text)
         if id_matches:
             obj_prefix = id_matches.group(1)
-            matching_prefixes = [x for x in cls.id_prefixes if x.upper() == obj_prefix.upper()]
+            matching_prefixes = [x for x in class_def.id_prefixes if x.upper() == obj_prefix.upper()]
             if matching_prefixes:
                 yield matching_prefixes[0] + ":" + id_matches.group(2)
         text_lower = text.lower()
         text_singularized = inflection.singularize(text_lower)
         if text_singularized != text_lower:
             logger.info(f"Singularized {text} to {text_singularized}")
-            yield from self.groundings(text_singularized, cls)
+            yield from self.groundings(text_singularized, class_def)
         paren_char = "["
         parenthetical_components = re.findall(r"\[(.*?)\]", text_lower)
         if not parenthetical_components:
@@ -472,7 +472,7 @@ class KnowledgeEngine(ABC):
                     logger.debug(
                         f"RECURSIVE GROUNDING OF {component} from {parenthetical_components}"
                     )
-                    yield from self.groundings(component, cls)
+                    yield from self.groundings(component, class_def)
                 if paren_char == "(":
                     trimmed_text = trimmed_text.replace(f"({component})", "")
                 elif paren_char == "[":
@@ -488,7 +488,7 @@ class KnowledgeEngine(ABC):
                 logger.debug(
                     f"{text_lower} =>trimmed=> {trimmed_text}; in {parenthetical_components}"
                 )
-                yield from self.groundings(trimmed_text, cls)
+                yield from self.groundings(trimmed_text, class_def)
         if self.dictionary and text_lower in self.dictionary:
             obj_id = self.dictionary[text_lower]
             logger.debug(f"Found {text} in dictionary: {obj_id}")
@@ -499,13 +499,13 @@ class KnowledgeEngine(ABC):
                     if len(syn) / len(text_lower) > self.min_grounding_text_overlap:
                         logger.debug(f"Found {syn} < {text} in dictionary: {obj_id}")
                         yield obj_id
-        if self.annotators and cls.name in self.annotators:
-            annotators = self.annotators[cls.name]
+        if self.annotators and class_def.name in self.annotators:
+            annotators = self.annotators[class_def.name]
         else:
-            if ANNOTATION_KEY_ANNOTATORS not in cls.annotations:
+            if ANNOTATION_KEY_ANNOTATORS not in class_def.annotations:
                 annotators = []
             else:
-                annotators = cls.annotations[ANNOTATION_KEY_ANNOTATORS].value.split(", ")
+                annotators = class_def.annotations[ANNOTATION_KEY_ANNOTATORS].value.split(", ")
         logger.info(f" Annotators: {annotators} [will skip: {self.skip_annotators}]")
         # prioritize whole matches by running these first
         for matches_whole_text in [True, False]:
@@ -535,7 +535,7 @@ class KnowledgeEngine(ABC):
                 except Exception as e:
                     logger.error(f"Error with {annotator} for {text}: {e}")
 
-    # def ground_text_to_id(self, text: str, cls: ClassDefinition = None) -> str:
+    # def ground_text_to_id(self, text: str, class_def: ClassDefinition = None) -> str:
     #    raise NotImplementedError
 
     def merge_resultsets(
