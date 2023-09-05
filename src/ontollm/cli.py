@@ -309,7 +309,7 @@ def extract(
         target_class_def = ke.schemaview.get_class(target_class)
     else:
         target_class_def = None
-    results = ke.extract_from_text(text=text, cls=target_class_def, show_prompt=show_prompt)
+    results = ke.extract_from_text(text=text, class_def=target_class_def, show_prompt=show_prompt)
     if set_slot_value:
         for slot_value in set_slot_value:
             slot, value = slot_value.split("=")
@@ -798,10 +798,10 @@ def convert(model, input, output, output_format, **kwargs):
     template = "recipe"
     logging.info(f"Creating for {template}")
 
-    cls = ke.template_pyclass
+    class_def = ke.template_pyclass
     with open(input, "r") as f:
         data = yaml.safe_load(f)
-    obj = cls(**data["extracted_object"])
+    obj = class_def(**data["extracted_object"])
     results = ExtractionResult(extracted_object=obj)
     write_extraction(results, output, output_format, ke)
 
