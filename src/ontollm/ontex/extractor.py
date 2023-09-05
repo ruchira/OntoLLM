@@ -1036,8 +1036,8 @@ class TaskCollection(BaseModel):
         tasks = []
         for task_dict in tc_dict["tasks"]:
             typ = task_dict["type"]
-            cls = current_module.__dict__[typ]
-            task = cls(**task_dict)
+            class_def = current_module.__dict__[typ]
+            task = class_def(**task_dict)
             if not isinstance(task.method, LLMReasonMethodType):
                 # TODO: figure how to get pydantic to do this
                 task.method = LLMReasonMethodType(task.method)
