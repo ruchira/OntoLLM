@@ -141,7 +141,8 @@ class ReasonerEngine(KnowledgeEngine):
     completion_length = 250
 
     def reason(
-        self, task: Task, template_path=None, strict=False, evaluate: bool = None
+        self, task: Task, template_path=None, strict=False, 
+        max_gen_len_total: int = 4097, evaluate: bool = None
     ) -> ReasonerResult:
         """Reason over axioms and query entailments."""
         if template_path is None:
@@ -167,7 +168,7 @@ class ReasonerEngine(KnowledgeEngine):
         # TODO: This truncation limit needs to be generalized
         logger.info(f"Prompt: {prompt}")
         prompt_length = len(self.encoding.encode(prompt)) + 10
-        max_len_total = 4097
+        max_len_total = max_gen_len_total
         max_len = max_len_total - completion_length
         completed = True
         logger.info(f"PROMPT LENGTH: {prompt_length} [max={max_len}]")
