@@ -49,7 +49,7 @@ class SPIRESEngine(KnowledgeEngine):
     If this is false AND the complex object is a pair, then token-based splitting is
     instead used.
     TODO: deprecate this, it's not clear that token-based splitting is better, due to
-    the inability to control which tokens GPT will use"""
+    the inability to control which tokens the LLM will use"""
 
     sentences_per_window: Optional[int] = None
     """If set, this will split the text into chains of sentences,
