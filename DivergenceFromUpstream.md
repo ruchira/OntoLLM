@@ -7,11 +7,11 @@ As explained in the [README](README.md), OntoLLM is a derivative of OntoGPT, but
 When comparing with upstream, the total number of commits we have checked and
 decided to either cherry-pick or skip is:
 
-92
+106
 
 Date of the last upstream commit checked:
 
-Aug 25, 2023
+September 5, 2023, upstream commit 25fd55c (cherry-picked).
 
 ## Individual commits
 
@@ -56,3 +56,9 @@ Skipping a859db7, it is just a merge and we have both of its parents already.
 Skipping cb9d8ba, it pertains only to the OpenAI client.
 
 Skipping 4849f4c, it is just a merge which pertains only to the OpenAI client.
+
+Skipping 901b661, it is a merge of 4849f4c (above) and [3991a98](https://github.com/ruchira/OntoLLM/commit/3991a988a764c536b2464bf57c53cec65afbe711), which we [have](https://github.com/monarch-initiative/ontogpt/commit/519e557afc5a0def4f62cd1a653b3f4d9d2733fc).
+
+Skipping e76e01f, it pertains only to an OpenAI model.
+
+Skipping 24e4f8a, it is a merge of 901b661 (above) and e76e01f (above).
