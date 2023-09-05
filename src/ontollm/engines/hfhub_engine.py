@@ -140,7 +140,7 @@ class HFHubEngine(KnowledgeEngine):
             an_object = an_object.dict()
         for k, v in an_object.items():
             if v:
-                slot = sv.induced_slot(k, cls.name)
+                slot = sv.induced_slot(k, class_def.name)
                 prompt += f"{k}: {self._serialize_value(v, slot)}\n"
         logging.debug(f"PROMPT: {prompt}")
         payload = self.client.complete(prompt)
