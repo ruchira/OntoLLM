@@ -2933,7 +2933,6 @@ files = [
 [package.extras]
 cssselect = ["cssselect (>=0.7)"]
 html5 = ["html5lib"]
-htmlsoup = ["BeautifulSoup4"]
 source = ["Cython (>=0.29.35)"]
 
 [[package]]
@@ -5156,7 +5155,6 @@ files = [
 ]
 
 [package.dependencies]
-beautifulsoup4 = ">=4.0.1"
 markdown2 = ">=2.4.3"
 pyquery = ">=1.2"
 
