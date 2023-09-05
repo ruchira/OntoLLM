@@ -559,9 +559,9 @@ class SPIRESEngine(KnowledgeEngine):
     def ground_annotation_object(
         self, ann: RESPONSE_DICT, cls: ClassDefinition = None
     ) -> Optional[pydantic.BaseModel]:
-        """Ground the direct parse of the OpenAI payload.
+        """Ground the direct parse of the LLM payload.
 
-        The raw openAI payload is a YAML-like string, which is parsed to
+        The raw LLM payload is a YAML-like string, which is parsed to
         a response dictionary.
 
         This dictionary is then grounded, using this method
