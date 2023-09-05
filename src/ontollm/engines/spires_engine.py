@@ -254,7 +254,7 @@ class SPIRESEngine(KnowledgeEngine):
 
         EXPERIMENTAL
 
-        currently GPT-3 does not do so well with this task.
+        currently some LLMs do not do so well with this task.
 
         :param terms:
         :param ontology:
