@@ -11,8 +11,6 @@ from urllib.parse import quote
 
 import inflection
 import pydantic
-# TODO: Change tiktoken to a HuggingFace tokenizer
-import tiktoken
 import yaml
 from linkml_runtime import SchemaView
 from linkml_runtime.linkml_model import ClassDefinition, ElementName, SlotDefinition
@@ -23,7 +21,7 @@ from oaklib.interfaces import MappingProviderInterface, TextAnnotatorInterface
 from oaklib.utilities.subsets.value_set_expander import ValueSetExpander
 
 from ontollm import DEFAULT_MODEL
-from ontollm.clients import HFHubClient
+from ontollm.clients import Llama2Client
 from ontollm.templates.core import ExtractionResult, NamedEntity
 
 this_path = Path(__file__).parent
@@ -158,15 +156,10 @@ class KnowledgeEngine(ABC):
             self.mappers = [get_adapter("translator:")]
 
         self.set_up_client()
-        # TODO: Change tiktoken to a HuggingFace tokenizer
-        try:
-            self.encoding = tiktoken.encoding_for_model(self.client.model)
-        except KeyError:
-            self.encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
-            logger.error(f"Could not find encoding for model {self.client.model}")
+        self.encoding = self.tokenizer
 
     def extract_from_text(
-        self, text: str, cls: ClassDefinition = None, object: OBJECT = None
+        self, text: str, cls: ClassDefinition = None, an_object: OBJECT = None
     ) -> ExtractionResult:
         raise NotImplementedError
 
@@ -198,18 +191,18 @@ class KnowledgeEngine(ABC):
             self.dictionary = {}
         entries = [(entry["synonym"].lower(), entry["id"]) for entry in path]
         entries = sorted(entries, key=lambda x: len(x[0]), reverse=True)
-        for syn, id in entries:
-            if syn in self.dictionary and self.dictionary[syn] != id:
+        for syn, ident in entries:
+            if syn in self.dictionary and self.dictionary[syn] != ident:
                 logger.warning(f"Duplicate synonym: {syn} => {id}, {self.dictionary[syn]}")
-            self.dictionary[syn] = id
+            self.dictionary[syn] = ident
         logger.info(f"Loaded {len(self.dictionary)}")
 
     # @abstractmethod
-    def synthesize(self, cls: ClassDefinition = None, object: OBJECT = None) -> ExtractionResult:
+    def synthesize(self, cls: ClassDefinition = None, an_object: OBJECT = None) -> ExtractionResult:
         raise NotImplementedError
 
     def generalize(
-        self, object: Union[pydantic.BaseModel, dict], examples: List[EXAMPLE]
+        self, an_object: Union[pydantic.BaseModel, dict], examples: List[EXAMPLE]
     ) -> ExtractionResult:
         raise NotImplementedError
 
@@ -366,7 +359,7 @@ class KnowledgeEngine(ABC):
         if cls.id_prefixes:
             if ":" not in input_id:
                 return False
-            prefix, rest = input_id.split(":", 1)
+            prefix, _ = input_id.split(":", 1)
             if prefix not in cls.id_prefixes:
                 logger.debug(f"ID {input_id} not in prefixes {cls.id_prefixes}")
                 return False
@@ -582,4 +575,5 @@ class KnowledgeEngine(ABC):
         return resultset[0]
 
     def set_up_client(self):
-        self.client = HFHubClient(model=self.model)
+        self.client = Llama2Client(model=self.model)
+        self.tokenizer = self.client.get_tokenizer(model=self.model)
