@@ -215,14 +215,14 @@ class EvalHPOA(SPIRESEvaluationEngine):
         for test_case in eos.test[0:num_tests]:
             text = self.disease_text(test_case.id)
             stub = {"name": test_case.name}
-            results = ke.extract_from_text(text, object=stub)
+            results = ke.extract_from_text(text, an_object=stub)
             if use_publications:
                 pmc = PubmedClient()
                 pub_resultset = []
                 for pmid in test_case.publications:
                     if pmid.startswith("PMID:"):
                         pub_text = pmc.text(pmid)
-                        pub_resultset.append(ke.extract_from_text(pub_text, object=stub))
+                        pub_resultset.append(ke.extract_from_text(pub_text, an_object=stub))
                 results = ke.merge_resultsets([results] + pub_resultset, ["name"])
             predicted_obj = results.extracted_object
             pred = PredictionHPOA(predicted_object=predicted_obj, test_object=test_case)

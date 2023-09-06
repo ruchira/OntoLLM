@@ -100,6 +100,9 @@ class EvalDrugMechDB(SPIRESEvaluationEngine):
         "sqlite:obo:uberon",
         "sqlite:obo:pr",
     ]
+    max_gen_len: int = 4097
+    temperature: float = 0.6
+    top_p: float = 0.9
 
     def __post_init__(self):
         self.extractor = SPIRESEngine("drug.DrugMechanism")
@@ -207,7 +210,7 @@ class EvalDrugMechDB(SPIRESEvaluationEngine):
                 "drug": m.drug,
             }
             text = self.drug_to_mechanism_text[m.drug]
-            prompt = ke.get_completion_prompt(None, text, object=stub)
+            prompt = ke.get_completion_prompt(None, text, an_object=stub)
             completion = ke.serialize_object(m)
             yield dict(prompt=prompt, completion=completion)
 
@@ -246,7 +249,7 @@ class EvalDrugMechDB(SPIRESEvaluationEngine):
                 "disease": test_obj.disease,
                 "drug": test_obj.drug,
             }
-            results = ke.extract_from_text(text, object=stub)
+            results = ke.extract_from_text(text, an_object=stub)
             predicted_obj = results.extracted_object
             pred = PredictionDrugMechDB(predicted_object=predicted_obj, test_object=test_obj)
             pred.named_entities = results.named_entities

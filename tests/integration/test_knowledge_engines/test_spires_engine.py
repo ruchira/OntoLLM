@@ -198,7 +198,7 @@ class TestCore(unittest.TestCase):
     def test_extract_with_stub(self):
         """Tests end to end knowledge extraction."""
         ke = self.ke
-        ann = ke.extract_from_text(PAPER, object={"pathways": ["GO:0140896"]})
+        ann = ke.extract_from_text(PAPER, an_object={"pathways": ["GO:0140896"]})
         print(f"RESULTS={ann}")
         print(yaml.dump(ann.dict()))
         results = ann.extracted_object
