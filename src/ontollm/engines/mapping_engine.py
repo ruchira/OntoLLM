@@ -56,7 +56,7 @@ class Confidence(str, Enum):
 
 class CategorizedMapping(BaseModel):
     subject: CURIE = None
-    object: CURIE = None
+    ont_object: CURIE = None
     completion: str = None
     predicate: Union[MappingPredicate, str] = None
     confidence: Union[Confidence, str] = None
@@ -66,7 +66,7 @@ class CategorizedMapping(BaseModel):
 
 class MappingTask(BaseModel):
     subject: CURIE
-    object: CURIE
+    ont_object: CURIE
     subject_label: str = None
     object_label: str = None
     subject_source: str = None
@@ -90,7 +90,7 @@ class MappingTaskCollection(BaseModel):
 class Relationship(BaseModel):
     predicate: CURIE
     predicate_label: str
-    object: CURIE
+    ont_object: CURIE
     object_label: str
 
 
@@ -112,7 +112,7 @@ class MappingEngine(KnowledgeEngine):
     object_adapter: BasicOntologyInterface = None
 
     def categorize_mapping(
-        self, subject: CURIE, object: CURIE, template_path: str = None
+        self, subject: CURIE, ont_object: CURIE, template_path: str = None
     ) -> CategorizedMapping:
         if template_path is None:
             template_path = DEFAULT_MAPPING_EVAL_PROMPT
@@ -124,15 +124,15 @@ class MappingEngine(KnowledgeEngine):
                 template_txt = file.read()
                 template = Template(template_txt)
         subject_concept = self._concept(subject, self.subject_adapter)
-        object_concept = self._concept(object, self.object_adapter)
+        object_concept = self._concept(ont_object, self.object_adapter)
         prompt = template.render(
             subject=subject_concept,
-            object=object_concept,
+            ont_object=object_concept,
         )
         payload = self.client.complete(prompt, max_tokens=MAX_TOKENS)
         cm = self._parse(payload)
         cm.subject = str(subject)
-        cm.object = str(object)
+        cm.ont_object = str(ont_object)
         if cm.predicate is None:
             cm.predicate = MappingPredicate.UNCATEGORIZED.value
         return cm
@@ -197,7 +197,7 @@ class MappingEngine(KnowledgeEngine):
             if task.object_adapter:
                 # TODO: do not mutate.
                 self.object_adapter = get_adapter(task.object_adapter)
-            cm = self.categorize_mapping(task.subject, task.object)
+            cm = self.categorize_mapping(task.subject, task.ont_object)
             yield cm
 
     def generate_tasks(
@@ -224,7 +224,7 @@ class MappingEngine(KnowledgeEngine):
             for mapping in sa.sssom_mappings(subjects, source=object_source):
                 yield MappingTask(
                     subject=mapping.subject_id,
-                    object=mapping.object_id,
+                    ont_object=mapping.object_id,
                     subject_source=mapping.subject_source,
                     object_source=mapping.object_source,
                     subject_adapter=f"sqlite:obo:{mapping.subject_source.lower()}",
@@ -256,7 +256,7 @@ class MappingEngine(KnowledgeEngine):
             mapping.object_source = _get_source(mapping.object_id)
             task = MappingTask(
                 subject=mapping.subject_id,
-                object=mapping.object_id,
+                ont_object=mapping.object_id,
                 predicate=MappingPredicate.mappings().get(mapping.predicate_id),
                 subject_label=mapping.subject_label,
                 object_label=mapping.object_label,
@@ -303,7 +303,7 @@ class MappingEngine(KnowledgeEngine):
             return Relationship(
                 predicate=p,
                 predicate_label=_label(p),
-                object=o,
+                ont_object=o,
                 object_label=_label(o),
             )
 
