@@ -59,24 +59,34 @@ class SPIRESEngine(KnowledgeEngine):
         self,
         text: str,
         show_prompt: bool = False,
-        cls: ClassDefinition = None,
-        object: OBJECT = None,
+        max_gen_len: int = 4097,
+        temperature: float = 0.6,
+        top_p: float = 0.9,
+        class_def: ClassDefinition = None,
+        an_object: OBJECT = None,
     ) -> ExtractionResult:
         """
         Extract annotations from the given text.
 
         :param text:
-        :param cls:
-        :param object: optional stub object
+        :param class_def:
+        :param an_object: optional stub object
         :return:
         """
         if self.sentences_per_window:
             chunks = chunk_text(text, self.sentences_per_window)
             extracted_object = None
             for chunk in chunks:
-                raw_text = self._raw_extract(chunk, cls, show_prompt=show_prompt, object=object)
+                raw_text = self._raw_extract(chunk, class_def,
+                                             show_prompt,
+                                             max_gen_len,
+                                             temperature,
+                                             top_p,
+                                             an_object=an_object)
                 logging.info(f"RAW TEXT: {raw_text}")
-                next_object = self.parse_completion_payload(raw_text, cls, object=object)
+                next_object = self.parse_completion_payload(raw_text,
+                                                            class_def,
+                                                            an_object=an_object)
                 if extracted_object is None:
                     extracted_object = next_object
                 else:
@@ -89,9 +99,16 @@ class SPIRESEngine(KnowledgeEngine):
                             else:
                                 extracted_object[k] = v
         else:
-            raw_text = self._raw_extract(text=text, cls=cls, show_prompt=show_prompt, object=object)
+            raw_text = self._raw_extract(text=text, class_def=class_def,
+                                         show_prompt=show_prompt,
+                                         max_gen_len=max_gen_len,
+                                         temperature=temperature,
+                                         top_p=top_p,
+                                         an_object=an_object)
             logging.info(f"RAW TEXT: {raw_text}")
-            extracted_object = self.parse_completion_payload(raw_text, cls, object=object)
+            extracted_object = self.parse_completion_payload(raw_text,
+                                                             class_def,
+                                                             an_object=an_object)
         return ExtractionResult(
             input_text=text,
             raw_completion_output=raw_text,
@@ -100,12 +117,24 @@ class SPIRESEngine(KnowledgeEngine):
             named_entities=self.named_entities,
         )
 
-    def _extract_from_text_to_dict(self, text: str, cls: ClassDefinition = None) -> RESPONSE_DICT:
-        raw_text = self._raw_extract(text, cls, )
-        return self._parse_response_to_dict(raw_text, cls)
+    def _extract_from_text_to_dict(self, text: str,
+                                   max_gen_len: int = 4097,
+                                   temperature: float = 0.6,
+                                   top_p: float = 0.9,
+                                   class_def: ClassDefinition = None) -> RESPONSE_DICT:
+        raw_text = self._raw_extract(text,
+                                     max_gen_len,
+                                     temperature,
+                                     top_p,
+                                     class_def, )
+        return self._parse_response_to_dict(raw_text, class_def)
 
     def generate_and_extract(
-        self, entity: str, show_prompt: bool = False, prompt_template: str = None, **kwargs
+        self, entity: str, show_prompt: bool = False, prompt_template: str = None,
+        max_gen_len: int = 4097,
+        temperature: float = 0.6,
+        top_p: float = 0.9,
+        **kwargs
     ) -> ExtractionResult:
         """
         Generate a description using the LLM, then extract from it using SPIRES.
@@ -118,7 +147,10 @@ class SPIRESEngine(KnowledgeEngine):
             prompt_template = "Generate a comprehensive description of {entity}.\n"
         # prompt = f"Generate a comprehensive description of {entity}.\n"
         prompt = prompt_template.format(entity=entity)
-        payload = self.client.complete(prompt, show_prompt)
+        payload = self.client.complete(prompt, show_prompt,
+                                       max_gen_len=max_gen_len,
+                                       temperature=temperature,
+                                       top_p=top_p)
         return self.extract_from_text(payload, **kwargs)
 
     def iteratively_generate_and_extract(
@@ -131,6 +163,9 @@ class SPIRESEngine(KnowledgeEngine):
         max_iterations=10,
         prompt_template=None,
         show_prompt: bool = False,
+        max_gen_len: int = 4097,
+        temperature: float = 0.6,
+        top_p: float = 0.9,
         **kwargs,
     ) -> Iterator[ExtractionResult]:
         def _remove_parenthetical_context(s: str):
@@ -165,7 +200,12 @@ class SPIRESEngine(KnowledgeEngine):
             else:
                 curie = None
             result = self.generate_and_extract(
-                next_entity, show_prompt=show_prompt, prompt_template=prompt_template, **kwargs
+                next_entity, show_prompt=show_prompt,
+                prompt_template=prompt_template,
+                max_gen_len=max_gen_len,
+                temperature=temperature,
+                top_p=top_p,
+                **kwargs
             )
             if curie:
                 if result.extracted_object:
@@ -211,32 +251,36 @@ class SPIRESEngine(KnowledgeEngine):
 
     def generalize(
         self,
-        object: Union[pydantic.BaseModel, dict],
+        an_object: Union[pydantic.BaseModel, dict],
         examples: List[EXAMPLE],
         show_prompt: bool = False,
+        max_gen_len: int = 4097,
+        temperature: float = 0.6,
+        top_p: float = 0.9,
     ) -> ExtractionResult:
         """
         Generalize the given examples.
 
-        :param object:
+        :param an_object:
         :param examples:
         :return:
         """
-        cls = self.template_class
+        class_def = self.template_class
         sv = self.schemaview
         prompt = "example:\n"
         for example in examples:
             prompt += f"{self.serialize_object(example)}\n\n"
         prompt += "\n\n===\n\n"
-        if isinstance(object, pydantic.BaseModel):
-            object = object.dict()
-        for k, v in object.items():
+        if isinstance(an_object, pydantic.BaseModel):
+            an_object = an_object.dict()
+        for k, v in an_object.items():
             if v:
-                slot = sv.induced_slot(k, cls.name)
+                slot = sv.induced_slot(k, class_def.name)
                 prompt += f"{k}: {self._serialize_value(v, slot)}\n"
         logging.debug(f"PROMPT: {prompt}")
-        payload = self.client.complete(prompt, show_prompt)
-        prediction = self.parse_completion_payload(payload, object=object)
+        payload = self.client.complete(prompt, show_prompt,
+                                       max_gen_len, temperature, top_p)
+        prediction = self.parse_completion_payload(payload, an_object=an_object)
         return ExtractionResult(
             input_text=prompt,
             raw_completion_output=payload,
@@ -246,7 +290,10 @@ class SPIRESEngine(KnowledgeEngine):
         )
 
     def map_terms(
-        self, terms: List[str], ontology: str, show_prompt: bool = False
+        self, terms: List[str], ontology: str, show_prompt: bool = False,
+        max_gen_len: int = 4097,
+        temperature: float = 0.6,
+        top_p: float = 0.9,
     ) -> Dict[str, List[str]]:
         """
         Map the given terms to the given ontology.
@@ -287,7 +334,8 @@ class SPIRESEngine(KnowledgeEngine):
         prompt += "===\n\nTerms:"
         prompt += "; ".join(terms)
         prompt += "===\n\n"
-        payload = self.client.complete(prompt, show_prompt)
+        payload = self.client.complete(prompt, show_prompt, max_gen_len,
+                                       temperature, top_p)
         # outer parse
         best_results = []
         for sep in ["\n", "; "]:
@@ -317,9 +365,9 @@ class SPIRESEngine(KnowledgeEngine):
                 logging.warning(f"Could not map term: {t}")
         return mappings
 
-    def serialize_object(self, example: EXAMPLE, cls: ClassDefinition = None) -> str:
-        if cls is None:
-            cls = self.template_class
+    def serialize_object(self, example: EXAMPLE, class_def: ClassDefinition = None) -> str:
+        if class_def is None:
+            class_def = self.template_class
         if isinstance(example, str):
             return example
         if isinstance(example, pydantic.BaseModel):
@@ -329,7 +377,7 @@ class SPIRESEngine(KnowledgeEngine):
         for k, v in example.items():
             if not v:
                 continue
-            slot = sv.induced_slot(k, cls.name)
+            slot = sv.induced_slot(k, class_def.name)
             v_serialized = self._serialize_value(v, slot)
             lines.append(f"{k}: {v_serialized}")
         return "\n".join(lines)
@@ -356,7 +404,11 @@ class SPIRESEngine(KnowledgeEngine):
         return val
 
     def _raw_extract(
-        self, text, show_prompt: bool = False, cls: ClassDefinition = None, object: OBJECT = None
+        self, text, show_prompt: bool = False,
+        max_gen_len: int = 4097,
+        temperature: float = 0.6,
+        top_p: float = 0.9,
+        class_def: ClassDefinition = None, an_object: OBJECT = None
     ) -> str:
         """
         Extract annotations from the given text.
@@ -364,24 +416,25 @@ class SPIRESEngine(KnowledgeEngine):
         :param text:
         :return:
         """
-        prompt = self.get_completion_prompt(cls, text, object=object)
+        prompt = self.get_completion_prompt(class_def, text, an_object=an_object)
         self.last_prompt = prompt
-        payload = self.client.complete(prompt, show_prompt)
+        payload = self.client.complete(prompt, show_prompt, max_gen_len,
+                                       temperature, top_p)
         return payload
 
     def get_completion_prompt(
-        self, cls: ClassDefinition = None, text: str = None, object: OBJECT = None
+        self, class_def: ClassDefinition = None, text: str = None, an_object: OBJECT = None
     ) -> str:
         """Get the prompt for the given template."""
-        if cls is None:
-            cls = self.template_class
+        if class_def is None:
+            class_def = self.template_class
         if not text or ("\n" in text or len(text) > 60):
             prompt = (
                 "From the text below, extract the following entities in the following format:\n\n"
             )
         else:
             prompt = "Split the following piece of text into fields in the following format:\n\n"
-        for slot in self.schemaview.class_induced_slots(cls.name):
+        for slot in self.schemaview.class_induced_slots(class_def.name):
             if ANNOTATION_KEY_PROMPT_SKIP in slot.annotations:
                 continue
             if ANNOTATION_KEY_PROMPT in slot.annotations:
@@ -400,19 +453,19 @@ class SPIRESEngine(KnowledgeEngine):
             prompt += f"{slot.name}: <{slot_prompt}>\n"
         # prompt += "Do not answer if you don't know\n\n"
         prompt = f"{prompt}\n\nText:\n{text}\n\n===\n\n"
-        if object:
-            if cls is None:
-                cls = self.template_class
-            if isinstance(object, pydantic.BaseModel):
-                object = object.dict()
-            for k, v in object.items():
+        if an_object:
+            if class_def is None:
+                class_def = self.template_class
+            if isinstance(an_object, pydantic.BaseModel):
+                an_object = an_object.dict()
+            for k, v in an_object.items():
                 if v:
-                    slot = self.schemaview.induced_slot(k, cls.name)
+                    slot = self.schemaview.induced_slot(k, class_def.name)
                     prompt += f"{k}: {self._serialize_value(v, slot)}\n"
         return prompt
 
     def _parse_response_to_dict(
-        self, results: str, cls: ClassDefinition = None
+        self, results: str, class_def: ClassDefinition = None
     ) -> Optional[RESPONSE_DICT]:
         """
         Parse the pseudo-YAML response from the LLM into a dictionary object.
@@ -430,7 +483,7 @@ class SPIRESEngine(KnowledgeEngine):
         """
         lines = results.splitlines()
         ann = {}
-        promptable_slots = self.promptable_slots(cls)
+        promptable_slots = self.promptable_slots(class_def)
         for line in lines:
             line = line.strip()
             if not line:
@@ -445,17 +498,17 @@ class SPIRESEngine(KnowledgeEngine):
                 else:
                     logging.error(f"Line '{line}' does not contain a colon; ignoring")
                     return
-            r = self._parse_line_to_dict(line, cls)
+            r = self._parse_line_to_dict(line, class_def)
             if r is not None:
                 field, val = r
                 ann[field] = val
         return ann
 
     def _parse_line_to_dict(
-        self, line: str, cls: ClassDefinition = None
+        self, line: str, class_def: ClassDefinition = None
     ) -> Optional[Tuple[FIELD, RESPONSE_ATOM]]:
-        if cls is None:
-            cls = self.template_class
+        if class_def is None:
+            class_def = self.template_class
         sv = self.schemaview
         # each line is a key-value pair
         logging.info(f"PARSING LINE: {line}")
@@ -464,15 +517,15 @@ class SPIRESEngine(KnowledgeEngine):
         # The LLML may mutate the output format somewhat,
         # randomly pluralizing or replacing spaces with underscores
         field = field.lower().replace(" ", "_")
-        cls_slots = sv.class_slots(cls.name)
+        cls_slots = sv.class_slots(class_def.name)
         slot = None
         if field in cls_slots:
-            slot = sv.induced_slot(field, cls.name)
+            slot = sv.induced_slot(field, class_def.name)
         else:
             if field.endswith("s"):
                 field = field[:-1]
             if field in cls_slots:
-                slot = sv.induced_slot(field, cls.name)
+                slot = sv.induced_slot(field, class_def.name)
         if not slot:
             logging.error(f"Cannot find slot for {field} in {line}")
             # raise ValueError(f"Cannot find slot for {field} in {line}")
@@ -523,29 +576,29 @@ class SPIRESEngine(KnowledgeEngine):
         return field, final_val
 
     def parse_completion_payload(
-        self, results: str, cls: ClassDefinition = None, object: dict = None
+        self, results: str, class_def: ClassDefinition = None, an_object: dict = None
     ) -> pydantic.BaseModel:
         """
         Parse the completion payload into a pydantic class.
 
         :param results:
-        :param cls:
+        :param class_def:
         :param object: stub object
         :return:
         """
-        raw = self._parse_response_to_dict(results, cls)
+        raw = self._parse_response_to_dict(results, class_def)
         logging.debug(f"RAW: {raw}")
-        if object:
-            raw = {**object, **raw}
-        self._auto_add_ids(raw, cls)
-        return self.ground_annotation_object(raw, cls)
+        if an_object:
+            raw = {**an_object, **raw}
+        self._auto_add_ids(raw, class_def)
+        return self.ground_annotation_object(raw, class_def)
 
-    def _auto_add_ids(self, ann: RESPONSE_DICT, cls: ClassDefinition = None) -> None:
+    def _auto_add_ids(self, ann: RESPONSE_DICT, class_def: ClassDefinition = None) -> None:
         if ann is None:
             return
-        if cls is None:
-            cls = self.template_class
-        for slot in self.schemaview.class_induced_slots(cls.name):
+        if class_def is None:
+            class_def = self.template_class
+        for slot in self.schemaview.class_induced_slots(class_def.name):
             if slot.identifier:
                 if slot.name not in ann:
                     auto_id = str(uuid.uuid4())
@@ -556,7 +609,7 @@ class SPIRESEngine(KnowledgeEngine):
                         ann[slot.name] = auto_id
 
     def ground_annotation_object(
-        self, ann: RESPONSE_DICT, cls: ClassDefinition = None
+        self, ann: RESPONSE_DICT, class_def: ClassDefinition = None
     ) -> Optional[pydantic.BaseModel]:
         """Ground the direct parse of the LLM payload.
 
@@ -566,16 +619,16 @@ class SPIRESEngine(KnowledgeEngine):
         This dictionary is then grounded, using this method
 
         :param ann: Raw annotation object
-        :param cls: schema class the ground object should instantiate
+        :param class_def: schema class the ground object should instantiate
         :return: Grounded annotation object
         """
         logging.debug(f"Grounding annotation object {ann}")
-        if cls is None:
-            cls = self.template_class
+        if class_def is None:
+            class_def = self.template_class
         sv = self.schemaview
         new_ann = {}
         if ann is None:
-            logging.error(f"Cannot ground None annotation, cls={cls.name}")
+            logging.error(f"Cannot ground None annotation, class_def={class_def.name}")
             return
         for field, vals in ann.items():
             if isinstance(vals, list):
@@ -583,7 +636,7 @@ class SPIRESEngine(KnowledgeEngine):
             else:
                 multivalued = False
                 vals = [vals]
-            slot = sv.induced_slot(field, cls.name)
+            slot = sv.induced_slot(field, class_def.name)
             rng_cls = sv.get_class(slot.range)
             enum_def = None
             if slot.range:
@@ -626,5 +679,5 @@ class SPIRESEngine(KnowledgeEngine):
                     new_ann[field] = obj
         logging.debug(f"Creating object from dict {new_ann}")
         logging.info(new_ann)
-        py_cls = self.template_module.__dict__[cls.name]
+        py_cls = self.template_module.__dict__[class_def.name]
         return py_cls(**new_ann)
