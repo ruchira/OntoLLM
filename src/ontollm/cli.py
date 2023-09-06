@@ -184,6 +184,24 @@ show_prompt_option = click.option(
     show_default=True,
     help="If set, show all prompts passed to model through an API. Use with verbose setting.",
 )
+max_gen_len_option = click.option(
+        "--max-gen-len",
+        default=4097,
+        type=click.INT,
+        help="Maximum length of generated sequences. Default is 4097.",
+)
+temperature_option = click.option(
+        "--temperature",
+        default=0.6,
+        type=click.FLOAT,
+        help="The temperature value for controlling randomness in generation.  Default is 0.6",
+)
+top_p_option = click.option(
+        "--top-p",
+        default=0.9,
+        type=click.FLOAT,
+        help="The top p sampling parameter for controlling diversity in generation. Default is 0.9",
+)
 
 
 @click.group()
@@ -229,6 +247,9 @@ def main(verbose: int, quiet: bool, cache_db: str, skip_annotator):
 @output_format_options
 @auto_prefix_option
 @show_prompt_option
+@max_gen_len_option
+@temperature_option
+@top_p_option
 @click.option(
     "--set-slot-value",
     "-S",
@@ -247,6 +268,9 @@ def extract(
     set_slot_value,
     model,
     show_prompt,
+    max_gen_len,
+    temperature,
+    top_p,
     **kwargs,
 ):
     """Extract knowledge from text guided by schema, using SPIRES engine.
@@ -309,7 +333,11 @@ def extract(
         target_class_def = ke.schemaview.get_class(target_class)
     else:
         target_class_def = None
-    results = ke.extract_from_text(text=text, class_def=target_class_def, show_prompt=show_prompt)
+    results = ke.extract_from_text(text=text, class_def=target_class_def,
+                                   show_prompt=show_prompt,
+                                   max_gen_len=max_gen_len,
+                                   temperature=temperature,
+                                   top_p=top_p)
     if set_slot_value:
         for slot_value in set_slot_value:
             slot, value = slot_value.split("=")
@@ -326,8 +354,12 @@ def extract(
 @output_format_options
 @auto_prefix_option
 @show_prompt_option
+@max_gen_len_option
+@temperature_option
+@top_p_option
 @click.argument("entity")
-def generate_extract(model, entity, template, output, output_format, show_prompt, **kwargs):
+def generate_extract(model, entity, template, output, output_format, show_prompt,
+                     max_gen_len, temperature, top_p, **kwargs):
     """Generate text and then extract knowledge from it."""
     logging.info(f"Creating for {template}")
 
@@ -350,7 +382,10 @@ def generate_extract(model, entity, template, output, output_format, show_prompt
         ke = GPT4AllEngine(template=template, model=model_name, **kwargs)
 
     logging.debug(f"Input entity: {entity}")
-    results = ke.generate_and_extract(entity, show_prompt)
+    results = ke.generate_and_extract(entity, show_prompt,
+                                      max_gen_len=max_gen_len,
+                                      temperature=temperature,
+                                      top_p=top_p)
     write_extraction(results, output, output_format, ke)
 
 
@@ -362,6 +397,9 @@ def generate_extract(model, entity, template, output, output_format, show_prompt
 @output_format_options
 @auto_prefix_option
 @show_prompt_option
+@max_gen_len_option
+@temperature_option
+@top_p_option
 @click.option("--ontology", "-r", help="Ontology to use; use oaklib selector path")
 @click.option("--max-iterations", "-M", default=10, type=click.INT)
 @click.option("--iteration-slot", "-I", multiple=True, help="Slots to iterate over")
@@ -381,7 +419,10 @@ def iteratively_generate_extract(
     max_iterations,
     clear,
     ontology,
-    show_prompt,
+    show_prompt,i,
+    max_gen_len=max_gen_len,
+    temperature=temperature,
+    top_p=top_p,
     **kwargs,
 ):
     """Iterate through generate-extract."""
@@ -411,6 +452,9 @@ def iteratively_generate_extract(
         entity,
         db,
         show_prompt=show_prompt,
+        max_gen_len=max_gen_len,
+        temperature=temperature,
+        top_p=top_p,
         iteration_slots=list(iteration_slot),
         max_iterations=max_iterations,
         adapter=adapter,
@@ -426,6 +470,9 @@ def iteratively_generate_extract(
 @output_option_wb
 @output_format_options
 @show_prompt_option
+@max_gen_len_option
+@temperature_option
+@top_p_option
 @click.option(
     "--get-pmc/--no-get-pmc",
     default=False,
@@ -462,7 +509,10 @@ def pubmed_extract(model, pmid, template, output, output_format, get_pmc, show_p
         textlist = pmc.text(pmid)
     for text in textlist:
         logging.debug(f"Input text: {text}")
-        results = ke.extract_from_text(text=text, show_prompt=show_prompt)
+        results = ke.extract_from_text(text=text, show_prompt=show_prompt,
+                                       max_gen_len=max_gen_len,
+                                       temperature=temperature,
+                                       top_p=top_p)
         write_extraction(results, output, output_format)
 
 
@@ -473,6 +523,9 @@ def pubmed_extract(model, pmid, template, output, output_format, get_pmc, show_p
 @output_option_wb
 @output_format_options
 @show_prompt_option
+@max_gen_len_option
+@temperature_option
+@top_p_option
 @click.option(
     "--limit",
     default=20,
@@ -485,7 +538,9 @@ def pubmed_extract(model, pmid, template, output, output_format, get_pmc, show_p
 )
 @click.argument("search")
 def pubmed_annotate(
-    model, search, template, output, output_format, limit, get_pmc, show_prompt, **kwargs
+    model, search, template, output, output_format, limit, get_pmc, show_prompt,
+    max_gen_len, temperature, top_p,
+    **kwargs
 ):
     """Retrieve a collection of PubMed IDs for a search term; annotate them using a template.
 
@@ -521,7 +576,10 @@ def pubmed_annotate(
         textlist = pmc.text(pmids[: pubmed_annotate_limit + 1])
     for text in textlist:
         logging.debug(f"Input text: {text}")
-        results = ke.extract_from_text(text=text, show_prompt=show_prompt)
+        results = ke.extract_from_text(text=text, show_prompt=show_prompt,
+                                       max_gen_len=max_gen_len,
+                                       temperature=temperature, 
+                                       top_p=top_p)
         write_extraction(results, output, output_format, ke)
 
 
@@ -532,9 +590,13 @@ def pubmed_annotate(
 @output_option_wb
 @output_format_options
 @show_prompt_option
+@max_gen_len_option
+@temperature_option
+@top_p_option
 @click.option("--auto-prefix", default="AUTO", help="Prefix to use for auto-generated classes.")
 @click.argument("article")
-def wikipedia_extract(model, article, template, output, output_format, show_prompt, **kwargs):
+def wikipedia_extract(model, article, template, output, output_format, 
+                      show_prompt, max_gen_len, temperature, top_p, **kwargs):
     """Extract knowledge from a Wikipedia page."""
     if not model:
         model = DEFAULT_MODEL
@@ -559,7 +621,10 @@ def wikipedia_extract(model, article, template, output, output_format, show_prom
     text = client.text(article)
 
     logging.debug(f"Input text: {text}")
-    results = ke.extract_from_text(text=text, show_prompt=show_prompt)
+    results = ke.extract_from_text(text=text, show_prompt=show_prompt,
+                                    max_gen_len=max_gen_len,
+                                    temperature=temperature,
+                                    top_p=top_p)
     write_extraction(results, output, output_format, ke)
 
 
@@ -570,6 +635,9 @@ def wikipedia_extract(model, article, template, output, output_format, show_prom
 @output_option_wb
 @output_format_options
 @show_prompt_option
+@max_gen_len_option
+@temperature_option
+@top_p_option
 @click.option(
     "--keyword",
     "-k",
@@ -577,7 +645,8 @@ def wikipedia_extract(model, article, template, output, output_format, show_prom
     help="Keyword to search for (e.g. --keyword therapy). Also obtained from schema",
 )
 @click.argument("topic")
-def wikipedia_search(model, topic, keyword, template, output, output_format, show_prompt, **kwargs):
+def wikipedia_search(model, topic, keyword, template, output, output_format, 
+                     show_prompt, max_gen_len, temperature, top_p,  **kwargs):
     """Extract knowledge from a Wikipedia page."""
     if not model:
         model = DEFAULT_MODEL
@@ -608,7 +677,10 @@ def wikipedia_search(model, topic, keyword, template, output, output_format, sho
             # TODO - expand this to fit context limits better
             # or add as cli option
             text = text[:4000]
-        results = ke.extract_from_text(text=text, show_prompt=show_prompt)
+        results = ke.extract_from_text(text=text, show_prompt=show_prompt,
+                                       max_gen_len=max_gen_len,
+                                       temperature=temperature,
+                                       top_p=top_p)
         write_extraction(results, output, output_format)
         break
 
@@ -620,6 +692,9 @@ def wikipedia_search(model, topic, keyword, template, output, output_format, sho
 @output_option_wb
 @output_format_options
 @show_prompt_option
+@max_gen_len_option
+@temperature_option
+@top_p_option
 @click.option(
     "--keyword",
     "-k",
@@ -628,7 +703,9 @@ def wikipedia_search(model, topic, keyword, template, output, output_format, sho
 )
 @click.argument("term_tokens", nargs=-1)
 def search_and_extract(
-    model, term_tokens, keyword, template, output, output_format, show_prompt, **kwargs
+    model, term_tokens, keyword, template, output, output_format, show_prompt, 
+    max_gen_len, temperature, top_p,
+    **kwargs
 ):
     """Search for relevant literature and extract knowledge from it."""
     if not model:
@@ -661,7 +738,10 @@ def search_and_extract(
     logging.info(f"PMID={pmid}")
     text = pmc.text(pmid)
     logging.info(f"Input text: {text}")
-    results = ke.extract_from_text(text=text, show_prompt=show_prompt)
+    results = ke.extract_from_text(text=text, show_prompt=show_prompt, 
+                                    max_gen_len=max_gen_len,
+                                    temperature=temperature,
+                                    top_p=top_p)
     write_extraction(results, output, output_format)
 
 
@@ -672,8 +752,12 @@ def search_and_extract(
 @output_option_wb
 @output_format_options
 @show_prompt_option
+@max_gen_len_option
+@temperature_option
+@top_p_option
 @click.argument("url")
-def web_extract(model, template, url, output, output_format, show_prompt, **kwargs):
+def web_extract(model, template, url, output, output_format, show_prompt, 
+                max_gen_len, temperature, top_p, **kwargs):
     """Extract knowledge from web page."""
     logging.info(f"Creating for {template}")
 
@@ -697,7 +781,10 @@ def web_extract(model, template, url, output, output_format, show_prompt, **kwar
     text = web_client.text(url)
 
     logging.debug(f"Input text: {text}")
-    results = ke.extract_from_text(text=text, show_prompt=show_prompt)
+    results = ke.extract_from_text(text=text, show_prompt=show_prompt,
+                                   max_gen_len=max_gen_len,
+                                   temperature=temperature,
+                                   top_p=top_p)
     write_extraction(results, output, output_format)
 
 
@@ -713,9 +800,13 @@ def web_extract(model, template, url, output, output_format, show_prompt, **kwar
 @click.option("--auto-prefix", default="AUTO", help="Prefix to use for auto-generated classes.")
 @model_option
 @show_prompt_option
+@max_gen_len_option
+@temperature_option
+@top_p_option
 @click.argument("url")
 def recipe_extract(
-    model, url, recipes_urls_file, dictionary, output, output_format, show_prompt, **kwargs
+    model, url, recipes_urls_file, dictionary, output, output_format, 
+    show_prompt, max_gen_len, temperature, top_p, **kwargs
 ):
     """Extract from recipe on the web."""
     try:
@@ -765,7 +856,10 @@ def recipe_extract(
     Instructions:\n{instructions}
     """
     logging.info(f"Input text: {text}")
-    results = ke.extract_from_text(text=text, show_prompt=show_prompt)
+    results = ke.extract_from_text(text=text, show_prompt=show_prompt,
+                                   max_gen_len=max_gen_len,
+                                   temperature=temperature,
+                                   top_p=top_p)
     logging.debug(f"Results: {results}")
     results.extracted_object.url = url
     write_extraction(results, output, output_format, ke)
@@ -1208,13 +1302,13 @@ def entity_similarity(terms, ontology, output, model, output_format, **kwargs):
 @inputfile_option
 @output_option_txt
 @model_option
+@max_gen_len_option
 @click.option("--task-file")
 @click.option("--task-type")
 @click.option("--tsv-output")
 @click.option("--all-methods/--no-all-methods", default=False)
 @click.option("--explain/--no-explain", default=False)
 @click.option("--evaluate/--no-evaluate", default=False)
-@click.option("--max-gen-len", "-G", default=4097, type=click.INT)
 @click.argument("terms", nargs=-1)
 def reason(
     terms,
@@ -1477,8 +1571,12 @@ def eval(evaluator, num_tests, output, output_format, **kwargs):
 @output_option_wb
 @output_format_options
 @show_prompt_option
+@max_gen_len_option
+@temperature_option
+@top_p_option
 @click.argument("object")
-def fill(model, template, object: str, examples, output, output_format, show_prompt, **kwargs):
+def fill(model, template, object: str, examples, output, output_format,
+         show_prompt, max_gen_len, temperature, top_p, **kwargs):
     """Fill in missing values."""
     logging.info(f"Creating for {template}")
 
@@ -1502,7 +1600,10 @@ def fill(model, template, object: str, examples, output, output_format, show_pro
     logging.info(f"Loading {examples}")
     examples = yaml.safe_load(examples)
     logging.debug(f"Input object: {object}")
-    results = ke.generalize(object, examples, show_prompt)
+    results = ke.generalize(object, examples, show_prompt,
+                            max_gen_len=max_gen_len,
+                            temperature=temperature,
+                            top_p=top_p)
 
     output.write(yaml.dump(results.dict()))
 
@@ -1512,8 +1613,12 @@ def fill(model, template, object: str, examples, output, output_format, show_pro
 @output_option_txt
 @output_format_options
 @show_prompt_option
+@max_gen_len_option
+@temperature_option
+@top_p_option
 @click.argument("input")
-def complete(model, input, output, output_format, show_prompt, **kwargs):
+def complete(model, input, output, output_format, show_prompt, 
+             max_gen_len, temperature, top_p, **kwargs):
     """Prompt completion."""
     if not model:
         model = DEFAULT_MODEL
@@ -1526,7 +1631,7 @@ def complete(model, input, output, output_format, show_prompt, **kwargs):
     # TODO: Check that we can get rid of OpenAI here
     if model_source == "OpenAI":
         c = OpenAIClient(model=model_name)
-        results = c.complete(text, show_prompt)
+        results = c.complete(text, show_prompt, max_gen_len, temperature, top_p)
 
     elif model_source == "GPT4All":
         c = set_up_gpt4all_model(modelname=model_name)
