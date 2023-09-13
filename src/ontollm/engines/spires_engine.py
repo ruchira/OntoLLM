@@ -77,12 +77,12 @@ class SPIRESEngine(KnowledgeEngine):
             chunks = chunk_text(text, self.sentences_per_window)
             extracted_object = None
             for chunk in chunks:
-                raw_text = self._raw_extract(chunk, class_def,
-                                             show_prompt,
-                                             max_gen_len,
-                                             temperature,
-                                             top_p,
-                                             an_object=an_object)
+                raw_text = self._raw_extract(chunk, class_def=class_def,
+                                             an_object=an_object,
+                                             show_prompt=show_prompt,
+                                             max_gen_len=max_gen_len,
+                                             temperature=temperature,
+                                             top_p=top_p,)
                 logging.info(f"RAW TEXT: {raw_text}")
                 next_object = self.parse_completion_payload(raw_text,
                                                             class_def,
@@ -117,16 +117,19 @@ class SPIRESEngine(KnowledgeEngine):
             named_entities=self.named_entities,
         )
 
+<<<<<<< HEAD:src/ontollm/engines/spires_engine.py
     def _extract_from_text_to_dict(self, text: str,
+                                   class_def: ClassDefinition = None,
                                    max_gen_len: int = 4097,
                                    temperature: float = 0.6,
                                    top_p: float = 0.9,
-                                   class_def: ClassDefinition = None) -> RESPONSE_DICT:
+                                   ) -> RESPONSE_DICT:
         raw_text = self._raw_extract(text,
-                                     max_gen_len,
-                                     temperature,
-                                     top_p,
-                                     class_def, )
+                                     class_def=class_def,
+                                     max_gen_len=max_gen_len,
+                                     temperature=temperature,
+                                     top_p=top_p, 
+                                     )
         return self._parse_response_to_dict(raw_text, class_def)
 
     def generate_and_extract(
@@ -405,10 +408,11 @@ class SPIRESEngine(KnowledgeEngine):
 
     def _raw_extract(
         self, text, show_prompt: bool = False,
+        class_def: ClassDefinition = None, an_object: OBJECT = None
+        show_prompt: bool = False,
         max_gen_len: int = 4097,
         temperature: float = 0.6,
         top_p: float = 0.9,
-        class_def: ClassDefinition = None, an_object: OBJECT = None
     ) -> str:
         """
         Extract annotations from the given text.
@@ -522,6 +526,7 @@ class SPIRESEngine(KnowledgeEngine):
         if field in cls_slots:
             slot = sv.induced_slot(field, class_def.name)
         else:
+            # TODO: check this
             if field.endswith("s"):
                 field = field[:-1]
             if field in cls_slots:
@@ -553,6 +558,7 @@ class SPIRESEngine(KnowledgeEngine):
             transformed = False
             slots_of_range = sv.class_slots(slot_range.name)
             if self.recurse or len(slots_of_range) > 2:
+                logging.debug(f"  RECURSING ON SLOT: {slot.name}, range={slot_range.name}")
                 vals = [self._extract_from_text_to_dict(v, slot_range) for v in vals]
             else:
                 for sep in [" - ", ":", "/", "*", "-"]:
@@ -643,9 +649,11 @@ class SPIRESEngine(KnowledgeEngine):
                 if slot.range in self.schemaview.all_enums():
                     enum_def = self.schemaview.get_enum(slot.range)
             new_ann[field] = []
+            logging.debug(f"FIELD: {field} SLOT: {slot.name}")
             for val in vals:
                 if not val:
                     continue
+                logging.debug(f"   VAL: {val}")
                 if isinstance(val, tuple):
                     # special case for pairs
                     sub_slots = sv.class_induced_slots(rng_cls.name)
