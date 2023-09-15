@@ -117,7 +117,6 @@ class SPIRESEngine(KnowledgeEngine):
             named_entities=self.named_entities,
         )
 
-<<<<<<< HEAD:src/ontollm/engines/spires_engine.py
     def _extract_from_text_to_dict(self, text: str,
                                    class_def: ClassDefinition = None,
                                    max_gen_len: int = 4097,
