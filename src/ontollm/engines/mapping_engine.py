@@ -55,27 +55,27 @@ class Confidence(str, Enum):
 
 
 class CategorizedMapping(BaseModel):
-    subject: CURIE = None
-    ont_object: CURIE = None
-    completion: str = None
-    predicate: Union[MappingPredicate, str] = None
-    confidence: Union[Confidence, str] = None
-    similarities: List[str] = None
-    differences: List[str] = None
+    subject: Optional[CURIE] = None
+    ont_object: Optional[CURIE] = None
+    completion: str = ""
+    predicate: Optional[Union[MappingPredicate, str]] = None
+    confidence: Optional[Union[Confidence, str]] = None
+    similarities: List[str] = [""]
+    differences: List[str] = [""]
 
 
 class MappingTask(BaseModel):
     subject: CURIE
     ont_object: CURIE
-    subject_label: str = None
-    object_label: str = None
-    subject_source: str = None
-    object_source: str = None
-    subject_adapter: str = None
-    object_adapter: str = None
-    predicate: Union[str, MappingPredicate] = None
-    difficulty: Confidence = None
-    score: float = None
+    subject_label: str = ""
+    object_label: str = ""
+    subject_source: str = ""
+    object_source: str = ""
+    subject_adapter: str = ""
+    object_adapter: str = ""
+    predicate: Optional[Union[str, MappingPredicate]] = None
+    difficulty: Optional[Confidence] = None
+    score: Optional[float] = None
 
 
 class MappingTaskCollection(BaseModel):
