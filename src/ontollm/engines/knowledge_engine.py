@@ -202,7 +202,7 @@ class KnowledgeEngine(ABC):
         raise NotImplementedError
 
     def generalize(
-        self, an_object: Union[pydantic.BaseModel, dict], examples: List[EXAMPLE]
+        self, an_object: Union[pydantic.BaseModel, dict], examples: List[EXAMPLE], show_prompt: bool
     ) -> ExtractionResult:
         raise NotImplementedError
 

@@ -1580,6 +1580,8 @@ def fill(model, template, object: str, examples, output, output_format,
     """Fill in missing values."""
     logging.info(f"Creating for {template}")
 
+    ke: KnowledgeEngine
+
     # Choose model based on input, or use the default
     if not model:
         model = DEFAULT_MODEL
@@ -1589,18 +1591,18 @@ def fill(model, template, object: str, examples, output, output_format,
     # TODO Make SPIRESEngine work without OpenAI, and change the model_source 
     # here
     if model_source == "OpenAI":
-        ke = SPIRESEngine(template, **kwargs)
-
-    elif model_source == "GPT4All":
+        ke = SPIRESEngine(template=template, **kwargs)
+    else:
         model_name = selectmodel["alternative_names"][0]
         ke = GPT4AllEngine(template=template, model=model_name, **kwargs)
 
-    object = yaml.safe_load(object)
+    an_object = yaml.safe_load(object)
     logging.info(f"Object to fill =  {object}")
     logging.info(f"Loading {examples}")
     examples = yaml.safe_load(examples)
     logging.debug(f"Input object: {object}")
-    results = ke.generalize(object, examples, show_prompt,
+    results = ke.generalize(an_object=an_object, examples=examples, 
+                            show_prompt=show_prompt,
                             max_gen_len=max_gen_len,
                             temperature=temperature,
                             top_p=top_p)
