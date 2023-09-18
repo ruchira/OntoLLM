@@ -5,17 +5,13 @@ import re
 import streamlit as st
 from oaklib import get_adapter
 
-from ontollm.engines import create_engine
-from ontollm.engines.enrichment import EnrichmentEngine, GeneDescriptionSource
-from ontollm.engines.knowledge_engine import (
-    MODEL_GPT_4_ALL_J_1_3_GROOVY,
-    MODEL_FLAN_T5_XXL,
-    MODEL_FLAN_UL2,
-    MODEL_FALCON_40B_INSTRUCT,
-    MODEL_BLOOM,
-    MODEL_DOLLY_V2_12B,
-)
-from ontollm.utils.gene_set_utils import GeneSet
+from ontogpt.engines import create_engine
+from ontogpt.engines.enrichment import EnrichmentEngine, GeneDescriptionSource
+from ontogpt.utils.gene_set_utils import GeneSet
+
+MODEL_GPT_3_5_TURBO = "gpt-3.5-turbo"
+MODEL_TEXT_DAVINCI_003 = "text-davinci-003"
+MODEL_GPT_4 = "gpt-4"
 
 go = get_adapter("sqlite:obo:go")
 
