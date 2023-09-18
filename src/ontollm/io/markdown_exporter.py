@@ -12,7 +12,7 @@ from ontollm.templates.core import ExtractionResult
 
 @dataclass
 class MarkdownExporter(Exporter):
-    def export(self, extraction_output: ExtractionResult, output: Union[str, Path, TextIO]):
+    def export(self, extraction_output: ExtractionResult, output: Union[str, Path, TextIO, BytesIO]):  # type: ignore
         if isinstance(output, Path):
             output = str(output)
         if isinstance(output, str):
