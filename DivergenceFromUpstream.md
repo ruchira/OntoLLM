@@ -7,11 +7,11 @@ As explained in the [README](README.md), OntoLLM is a derivative of OntoGPT, but
 When comparing with upstream, the total number of commits we have checked and
 decided to either cherry-pick or skip is:
 
-106
+156
 
 Date of the last upstream commit checked:
 
-September 5, 2023, upstream commit 25fd55c (cherry-picked).
+September 15, 2023, upstream commit 0c4e81b (skipped).
 
 ## Individual commits
 
@@ -62,3 +62,22 @@ Skipping 901b661, it is a merge of 4849f4c (above) and [3991a98](https://github.
 Skipping e76e01f, it pertains only to an OpenAI model.
 
 Skipping 24e4f8a, it is a merge of 901b661 (above) and e76e01f (above).
+
+Skipping 01ea11c, it is just a merge and we have both of its parents already.
+
+Skipping ce72628, it is just a merge and we have both of its parents already.
+
+Skipping ca2dfd8, it is a merge of ce72628 (above) and
+[cf1568e](https://github.com/monarch-initiative/ontogpt/commit/cf1568e76ca0ca803a18c57bd1abd420b92fcb57),
+which we
+[have](https://github.com/monarch-initiative/ontogpt/commit/88ed55b56424568992dabd7926f3f7f09aa75d7e).
+
+Skipping 39c2b1e, it is just a merge and we have both of its parents already.
+
+Skipping 24b52ce, it is a merge of 39c2b1e (above) and [1d17905](https://github.com/ruchira/OntoLLM/commit/1d179054aacf0e8bf032305041478a24cc541c88), which we [have](https://github.com/ruchira/OntoLLM/commit/a3dcd0a503d9314de1a479843d56aed396998b0c).
+
+Skipping 3b3e146, it is a merge of 24b52ce (above) and [8298484](https://github.com/ruchira/OntoLLM/commit/82984842c96a652c25674b8197d82df7a0006236), which we [have](https://github.com/ruchira/OntoLLM/commit/4f603158ebbd6b077ed0f9e77418b61b8882f00e).
+
+Skipping fa631c7, it is just a merge and we have both of its parents already.
+
+Skipping 0c4e81b, it pertains to another branch make-kgx-tsv.
