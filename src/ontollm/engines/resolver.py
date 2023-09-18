@@ -4,7 +4,7 @@ from typing import Optional, Type, Union
 from class_resolver import ClassResolver
 
 from ontollm.engines.enrichment import EnrichmentEngine
-from ontollm.engines.halo_engine import HALOEngine
+from ontollm.engines.halo_engine import HALOEngine  # type: ignore
 from ontollm.engines.knowledge_engine import KnowledgeEngine
 from ontollm.engines.spires_engine import SPIRESEngine
 

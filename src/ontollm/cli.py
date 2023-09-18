@@ -30,8 +30,8 @@ from ontollm.engines import create_engine
 from ontollm.engines.embedding_similarity_engine import SimilarityEngine
 from ontollm.engines.enrichment import EnrichmentEngine
 from ontollm.engines.generic_engine import GenericEngine, QuestionCollection
-from ontollm.engines.gpt4all_engine import GPT4AllEngine
-from ontollm.engines.halo_engine import HALOEngine
+from ontollm.engines.gpt4all_engine import GPT4AllEngine  # type: ignore
+from ontollm.engines.halo_engine import HALOEngine  # type: ignore
 
 # from ontollm.engines.hfhub_engine import HFHubEngine
 from ontollm.engines.knowledge_engine import KnowledgeEngine
@@ -43,6 +43,7 @@ from ontollm.engines.synonym_engine import SynonymEngine
 from ontollm.evaluation.enrichment.eval_enrichment import EvalEnrichment
 from ontollm.evaluation.resolver import create_evaluator
 from ontollm.io.csv_wrapper import write_obj_as_csv
+from ontollm.io.csv_wrapper import output_parser
 from ontollm.io.html_exporter import HTMLExporter
 from ontollm.io.markdown_exporter import MarkdownExporter
 from ontollm.utils.gene_set_utils import (
@@ -103,7 +104,7 @@ def write_extraction(
             exporter.export(results, output)
         elif output_format == "yaml":
             output = _as_text_writer(output)
-            output.write(dump_minimal_yaml(results).encode('utf-8'))
+            output.write(dump_minimal_yaml(results).encode("utf-8"))
         elif output_format == "turtle":
             output = _as_text_writer(output)
             exporter = RDFExporter()
@@ -116,13 +117,13 @@ def write_extraction(
             # output = _as_text_writer(output)
             # output.write(write_obj_as_csv(results))
             output = _as_text_writer(output)
-            output.write(dump_minimal_yaml(results).encode('utf-8'))
+            output.write(dump_minimal_yaml(results).encode("utf-8"))
             with open("output.kgx.tsv") as secondoutput:
                 for line in output_parser(obj=results, file=output):
                     secondoutput.write(line)
         else:
             output = _as_text_writer(output)
-            output.write(dump_minimal_yaml(results).encode('utf-8'))
+            output.write(dump_minimal_yaml(results).encode("utf-8"))
 
 
 def get_model_by_name(modelname: str):
