@@ -65,7 +65,7 @@ class HALOEngine(KnowledgeEngine):
     traverse_slots: List[FIELD] = field(
         default_factory=lambda: ["subtypes", "parts", "subclass_of", "part_of"]
     )
-    fixed_slot_values: Dict[str, str] = None
+    fixed_slot_values: Optional[Dict[str, str]] = None
     adapter: OboGraphInterface = None
     visited: Set[ELEMENT_NAME] = field(default_factory=lambda: set())
     candidates: List[ELEMENT_NAME] = None
