@@ -172,8 +172,8 @@ class PubmedClient:
         return pmids
 
     def text(
-        self, ids: Union[list[PMID], PMID], raw=False, autoformat=True, pubmedcental=False
-    ) -> Union[list[str], str]:
+        self, ids: Union[List[PMID], PMID], raw=False, autoformat=True, pubmedcental=False
+    ) -> Union[List[str], str]:
         """Get the text of one or more papers from their PMIDs.
 
         :param ids: List of PubMed IDs, or string with single PMID
