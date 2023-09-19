@@ -9,7 +9,7 @@ import sqlite3
 from typing import Iterator, Tuple
 
 from llama import llama
-from llama.tokenizer import Tokenizer
+from llama.llama.tokenizer import Tokenizer
 from torch import Tensor, device
 
 import numpy as np
