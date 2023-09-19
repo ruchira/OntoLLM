@@ -25,31 +25,13 @@ from pydantic import BaseModel
 # TODO: Change tiktoken to a HuggingFace tokenizer
 from tiktoken import Encoding
 
-<<<<<<< HEAD:src/ontollm/evaluation/enrichment/eval_enrichment.py
+from ontollm import MODELS
 from ontollm.engines import create_engine
 from ontollm.engines.enrichment import ENTITY_ID, EnrichmentEngine, EnrichmentPayload
 from ontollm.engines.knowledge_engine import MODEL_NAME
-from ontollm import MODELS
 from ontollm.evaluation.evaluation_engine import EvaluationEngine
 from ontollm.templates.class_enrichment import ClassEnrichmentResult
 from ontollm.utils.gene_set_utils import SYMBOL, GeneSet, drop_genes_from_gene_set, gene_info
-||||||| parent of d12220cd... LINTING
-from ontogpt.engines import create_engine
-from ontogpt.engines.enrichment import ENTITY_ID, EnrichmentEngine, EnrichmentPayload
-from ontogpt.engines.knowledge_engine import MODEL_NAME
-from ontogpt import MODELS
-from ontogpt.evaluation.evaluation_engine import EvaluationEngine
-from ontogpt.templates.class_enrichment import ClassEnrichmentResult
-from ontogpt.utils.gene_set_utils import SYMBOL, GeneSet, drop_genes_from_gene_set, gene_info
-=======
-from ontogpt import MODELS
-from ontogpt.engines import create_engine
-from ontogpt.engines.enrichment import ENTITY_ID, EnrichmentEngine, EnrichmentPayload
-from ontogpt.engines.knowledge_engine import MODEL_NAME
-from ontogpt.evaluation.evaluation_engine import EvaluationEngine
-from ontogpt.templates.class_enrichment import ClassEnrichmentResult
-from ontogpt.utils.gene_set_utils import SYMBOL, GeneSet, drop_genes_from_gene_set, gene_info
->>>>>>> d12220cd... LINTING:src/ontogpt/evaluation/enrichment/eval_enrichment.py
 
 THIS_DIR = Path(__file__).parent
 DATABASE_DIR = Path(__file__).parent / "database"
