@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ontollm"
-version = "0.3.1"
+version = "0.3.2"
 description = "OntoLLM"
 authors = ["Chris Mungall <cjmungall@lbl.gov>"]
 license = "BSD-3"
