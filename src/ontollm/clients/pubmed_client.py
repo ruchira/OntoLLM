@@ -66,7 +66,7 @@ def _score_text(text: str, keywords: List[str]) -> int:
     return score
 
 
-def clean_pmids(ids: list[PMID]) -> list[PMID]:
+def clean_pmids(ids: List[PMID]) -> List[PMID]:
     """Remove prefixes from a list of PMIDs, returning the new list."""
     clean_ids = [id.replace("PMID:", "", 1) for id in ids]
     return clean_ids
