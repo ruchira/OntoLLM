@@ -539,7 +539,7 @@ class KnowledgeEngine(ABC):
     #    raise NotImplementedError
 
     def merge_resultsets(
-        self, resultset: List[ExtractionResult], unique_fields: List[str] = None
+        self, resultset: List[ExtractionResult], unique_fields: List[str]
     ) -> ExtractionResult:
         """
         Merge all resultsets into a single resultset.

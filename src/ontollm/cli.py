@@ -42,8 +42,7 @@ from ontollm.engines.spires_engine import SPIRESEngine
 from ontollm.engines.synonym_engine import SynonymEngine
 from ontollm.evaluation.enrichment.eval_enrichment import EvalEnrichment
 from ontollm.evaluation.resolver import create_evaluator
-from ontollm.io.csv_wrapper import write_obj_as_csv
-from ontollm.io.csv_wrapper import output_parser
+from ontollm.io.csv_wrapper import output_parser, write_obj_as_csv
 from ontollm.io.html_exporter import HTMLExporter
 from ontollm.io.markdown_exporter import MarkdownExporter
 from ontollm.utils.gene_set_utils import (
