@@ -49,7 +49,7 @@ class Llama2Client:
                 tokenizer_path = self.tokenizer_filepath,
                 max_seq_len = self.max_seq_len,
                 max_batch_size = self.max_batch_size)
-        self.model_name = os.path.basename(ckpt_dir)
+        self.model_name = os.path.basename(checkpoint_dir_path)
 
 
     def db_cursor(self):
