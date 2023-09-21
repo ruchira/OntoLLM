@@ -8,7 +8,7 @@ from pathlib import Path
 import sqlite3
 from typing import Iterator, Tuple
 
-from llama import Llama
+from llama.llama.generation import Llama
 from llama.llama.tokenizer import Tokenizer
 from torch import Tensor, device
 
