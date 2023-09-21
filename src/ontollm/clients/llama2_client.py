@@ -39,11 +39,11 @@ class Llama2Client:
         if not os.path.exists(self.tokenizer_filepath):
             raise ValueError(
                 f"Didn't find {self.tokenizer_filepath}.\n"
-                + DOWNLOAD_FIRST_MSG)
+                + self.DOWNLOAD_FIRST_MSG)
         if not os.path.exists(self.checkpoint_dir_path):
             raise ValueError(
                 f"Didn't find directory {self.checkpoint_dir_path}.\n"
-                + DOWNLOAD_FIRST_MSG)
+                + self.DOWNLOAD_FIRST_MSG)
         self.llama = Llama.build(
                 ckpt_dir = self.checkpoint_dir_path,
                 tokenizer_path = self.tokenizer_filepath,
@@ -55,9 +55,9 @@ class Llama2Client:
     def db_cursor(self):
         if not self.cache_db_path_str:
             self.cache_db_path_str = ".llama2_cache.db"
-            logger.info(
-                    f"Caching Llama 2 responses to {cache_db_path.absolute()}")
         cache_db_path = Path(self.cache_db_path_str)
+        logger.info(
+                f"Caching Llama 2 responses to {cache_db_path.absolute()}")
         should_create = not cache_db_path.exists()
         connection = sqlite3.connect(self.cache_db_path_str)
         cur = connection.cursor()
