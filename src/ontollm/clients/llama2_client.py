@@ -48,7 +48,7 @@ class Llama2Client:
                 ckpt_dir = self.checkpoint_dir_path,
                 tokenizer_path = self.tokenizer_filepath,
                 max_seq_len = self.max_seq_len,
-                max_batch_size = self.batch_size)
+                max_batch_size = self.max_batch_size)
         self.model_name = os.path.basename(ckpt_dir)
 
 
