@@ -1,9 +1,8 @@
 """HuggingFace Hub Client."""
 import logging
-
 from dataclasses import dataclass
 # TODO: Replace langchain, perhaps with llm
-from langchain import HuggingFaceHub, PromptTemplate, LLMChain
+from langchain import HuggingFaceHub, LLMChain, PromptTemplate
 import numpy as np
 from oaklib.utilities.apikey_manager import get_apikey_value
 from sentence_transformers import SentenceTransformer
@@ -15,6 +14,7 @@ from sentence_transformers import SentenceTransformer
 # endpoint using a HuggingFace API key, or querying a self-hosted HuggingFace
 # LLM.  See
 # https://api.python.langchain.com/en/latest/_modules/langchain/llms/self_hosted_hugging_face.html
+
 
 @dataclass
 class HFHubClient:
@@ -33,22 +33,24 @@ class HFHubClient:
             logging.info("HuggingFace Hub API key not found. Using models locally.")
 
     def get_model(self, modelname: str) -> HuggingFaceHub:
-        """Retreive a model from the Hub, given its repository name.
+        """Retrieve a model from the Hub, given its repository name.
 
         Returns a model object of type
         langchain.llms.huggingface_hub.HuggingFaceHub
         """
-        model = HuggingFaceHub(repo_id=modelname,
-                               verbose=True,
-                               model_kwargs={"temperature": 0.2, "max_length": 500},
-                               huggingfacehub_api_token=self.api_key,
-                               task="text-generation"
-                               )
+        model = HuggingFaceHub(
+            repo_id=modelname,
+            verbose=True,
+            model_kwargs={"temperature": 0.2, "max_length": 500},
+            huggingfacehub_api_token=self.api_key,
+            task="text-generation"
+        )
         self.models_by_name[modelname] = model
         self.modelnames_by_model[model] = modelname
         self.sentence_transformers_by_name[modelname] \
                 = SentenceTransformer(modelname)
         return model
+
 
     def query_hf_model(self, llm, prompt_text):
         """Interact with a GPT4All model."""
