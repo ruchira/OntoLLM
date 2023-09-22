@@ -84,7 +84,7 @@ class Llama2Client:
             logger.info(f"Using cached payload for prompt: {prompt_peek}...")
             return payload[0]
         try:
-            responses = self.llama.model.text_completion(
+            responses = self.llama.text_completion(
                         [prompt],
                         max_gen_len=max_gen_len,
                         temperature=temperature,
