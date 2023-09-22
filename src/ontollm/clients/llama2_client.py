@@ -76,8 +76,8 @@ class Llama2Client:
         if show_prompt:
             logger.info(f" SENDING PROMPT\n{prompt}")
         cur = self.db_cursor()
-        cached = cur.execute("SELECT payload FROM cache WHERE prompt=?",
-                (prompt))
+        cached = cur.execute("SELECT payload FROM cache WHERE prompt=:prompt",
+                {"prompt" : prompt})
         payload = cached.fetchone()
         if payload:
             prompt_peek = str(prompt)[0:80].replace("\n", "\\n")
