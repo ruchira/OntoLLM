@@ -104,7 +104,7 @@ def write_extraction(
             exporter = HTMLExporter(output=output)
             exporter.export(results, output)
         elif output_format == "yaml":
-            output.write("---\n")
+            output.write("---\n")  # type: ignore
             output.write(dump_minimal_yaml(results))  # type: ignore
         elif output_format == "turtle":
             exporter = RDFExporter()
@@ -119,7 +119,7 @@ def write_extraction(
                 for line in output_parser(obj=results, file=output):
                     secondoutput.write(line)
         else:
-            output.write("---\n")
+            output.write("---\n")  # type: ignore
             output.write(dump_minimal_yaml(results))  # type: ignore
 
 
