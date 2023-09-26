@@ -103,6 +103,7 @@ class Llama2Client:
         return ""
 
     def chat_completion(self, user_prompt: str, system_prompt: str = None,
+                        show_prompt : bool = False,
                         max_gen_len: int = 4097,
                         temperature: float = 0.2,
                         top_p: float = 0.9):
@@ -110,6 +111,9 @@ class Llama2Client:
         if system_prompt is not None:
             logger.info(f"Chat system: prompt[{len(prompt)}]={system_prompt[0:256]}...")
         logger.info(f"Chat user: prompt[{len(prompt)}]={user_prompt[0:256]}...")
+        if show_prompt:
+            logger.info(f" SENDING SYSTEM PROMPT\n{system_prompt}")
+            logger.info(f" SENDING USER PROMPT\n{user_prompt}")
         cur = self.db_cursor()
         if system_prompt is None:
             cached = cur.execute("SELECT payload FROM cache WHERE user_prompt=:user__prompt AND system_prompt IS NULL",
