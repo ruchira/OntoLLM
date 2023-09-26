@@ -41,6 +41,8 @@ RESPONSE_DICT = Dict[FIELD, Union[RESPONSE_ATOM, List[RESPONSE_ATOM]]]
 
 # TODO: Enable using the system prompt in client.chat_completion for models such
 # CodeLlama7b-Instruct etc.
+# TODO: Perhaps remove method arguments such as temperature, top_p as they
+# should be controlled by the methods here?
 @dataclass
 class SPIRESEngine(KnowledgeEngine):
     """Knowledge extractor."""
