@@ -39,6 +39,8 @@ RESPONSE_ATOM = Union[str, "ResponseAtom"]  # type: ignore
 RESPONSE_DICT = Dict[FIELD, Union[RESPONSE_ATOM, List[RESPONSE_ATOM]]]
 
 
+# TODO: Enable using the system prompt in client.chat_completion for models such
+# CodeLlama7b-Instruct etc.
 @dataclass
 class SPIRESEngine(KnowledgeEngine):
     """Knowledge extractor."""
@@ -127,7 +129,7 @@ class SPIRESEngine(KnowledgeEngine):
                                      class_def=class_def,
                                      max_gen_len=max_gen_len,
                                      temperature=temperature,
-                                     top_p=top_p, 
+                                     top_p=top_p,
                                      )
         return self._parse_response_to_dict(raw_text, class_def)
 
@@ -150,9 +152,9 @@ class SPIRESEngine(KnowledgeEngine):
         prompt = prompt_template.format(entity=entity)
         if self.client is not None:
             payload = self.client.complete(prompt, show_prompt,
-                                       max_gen_len=max_gen_len,
-                                       temperature=temperature,
-                                       top_p=top_p)
+                                           max_gen_len=max_gen_len,
+                                           temperature=temperature,
+                                           top_p=top_p)
         else:
             payload = ""
         return self.extract_from_text(payload, **kwargs)
@@ -408,10 +410,10 @@ class SPIRESEngine(KnowledgeEngine):
         return val
 
     def _raw_extract(
-        self, 
-        text, 
-        class_def: ClassDefinition = None, 
-        an_object: OBJECT = None
+        self,
+        text,
+        class_def: ClassDefinition = None,
+        an_object: OBJECT = None,
         show_prompt: bool = False,
         max_gen_len: int = 4097,
         temperature: float = 0.6,
