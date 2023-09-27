@@ -14,7 +14,7 @@ from torch import Tensor, device
 
 import numpy as np
 
-LLAMA2_MAX_LEN
+LLAMA2_MAX_LEN = 16000
 
 # This module is for interacting directly with a self-hosted Llama 2 model,
 # together with a sentence embedding model.
