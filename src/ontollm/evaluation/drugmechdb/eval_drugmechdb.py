@@ -101,9 +101,6 @@ class EvalDrugMechDB(SPIRESEvaluationEngine):
         "sqlite:obo:uberon",
         "sqlite:obo:pr",
     ]
-    max_gen_len: int = 4097
-    temperature: float = 0.6
-    top_p: float = 0.9
 
     def __post_init__(self):
         self.extractor = SPIRESEngine("drug.DrugMechanism")

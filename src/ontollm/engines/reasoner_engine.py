@@ -141,8 +141,8 @@ class ReasonerEngine(KnowledgeEngine):
     completion_length = 250
 
     def reason(
-        self, task: Task, template_path=None, strict=False, 
-        max_gen_len: int = 4097, evaluate: bool = None
+        self, task: Task, template_path=None, strict=False,
+        max_gen_len: int = None, evaluate: bool = None
     ) -> ReasonerResult:
         """Reason over axioms and query entailments."""
         if template_path is None:
@@ -171,7 +171,10 @@ class ReasonerEngine(KnowledgeEngine):
             prompt_length = len(self.encoding.encode(prompt)) + 10
         else:
             prompt_length = len(prompt)
-        max_len_total = max_gen_len
+        if max_gen_len is None:
+            max_len_total = self.client.max_seq_len
+        else:
+            max_len_total = max_gen_len
         max_len = max_len_total - completion_length
         completed = True
         logger.info(f"PROMPT LENGTH: {prompt_length} [max={max_len}]")

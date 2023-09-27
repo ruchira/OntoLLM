@@ -63,7 +63,7 @@ class SPIRESEngine(KnowledgeEngine):
         self,
         text: str,
         show_prompt: bool = False,
-        max_gen_len: int = 4097,
+        max_gen_len: int = None,
         temperature: float = 0.6,
         top_p: float = 0.9,
         class_def: ClassDefinition = None,
@@ -123,7 +123,7 @@ class SPIRESEngine(KnowledgeEngine):
 
     def _extract_from_text_to_dict(self, text: str,
                                    class_def: ClassDefinition = None,
-                                   max_gen_len: int = 4097,
+                                   max_gen_len: int = None,
                                    temperature: float = 0.6,
                                    top_p: float = 0.9,
                                    ) -> RESPONSE_DICT:
@@ -137,7 +137,7 @@ class SPIRESEngine(KnowledgeEngine):
 
     def generate_and_extract(
         self, entity: str, show_prompt: bool = False, prompt_template: str = None,
-        max_gen_len: int = 4097,
+        max_gen_len: int = None,
         temperature: float = 0.6,
         top_p: float = 0.9,
         **kwargs
@@ -153,7 +153,12 @@ class SPIRESEngine(KnowledgeEngine):
             prompt_template = "Generate a comprehensive description of {entity}.\n"
         prompt = prompt_template.format(entity=entity)
         if self.client is not None:
-            payload = self.client.complete(prompt, show_prompt,
+            if max_gen_len is None:
+                payload = self.client.complete(prompt, show_prompt,
+                                           temperature=temperature,
+                                           top_p=top_p)
+            else:
+                payload = self.client.complete(prompt, show_prompt,
                                            max_gen_len=max_gen_len,
                                            temperature=temperature,
                                            top_p=top_p)
@@ -171,7 +176,7 @@ class SPIRESEngine(KnowledgeEngine):
         max_iterations=10,
         prompt_template=None,
         show_prompt: bool = False,
-        max_gen_len: int = 4097,
+        max_gen_len: int = None,
         temperature: float = 0.6,
         top_p: float = 0.9,
         **kwargs,
@@ -262,7 +267,7 @@ class SPIRESEngine(KnowledgeEngine):
         an_object: Union[pydantic.BaseModel, dict],
         examples: List[EXAMPLE],
         show_prompt: bool = False,
-        max_gen_len: int = 4097,
+        max_gen_len: int = None,
         temperature: float = 0.6,
         top_p: float = 0.9,
     ) -> ExtractionResult:
@@ -286,8 +291,13 @@ class SPIRESEngine(KnowledgeEngine):
                 slot = sv.induced_slot(k, class_def.name)
                 prompt += f"{k}: {self._serialize_value(v, slot)}\n"
         logging.debug(f"PROMPT: {prompt}")
-        payload = self.client.complete(prompt, show_prompt,
-                                       max_gen_len, temperature, top_p)
+        if max_gen_len is None:
+            payload = self.client.complete(prompt, show_prompt,
+                                           temperature=temperature, top_p=top_p)
+        else:
+            payload = self.client.complete(prompt, show_prompt,
+                                           max_gen_len=max_gen_len, 
+                                           temperature=temperature, top_p=top_p)
         prediction = self.parse_completion_payload(payload, an_object=an_object)
         return ExtractionResult(
             input_text=prompt,
@@ -299,7 +309,7 @@ class SPIRESEngine(KnowledgeEngine):
 
     def map_terms(
         self, terms: List[str], ontology: str, show_prompt: bool = False,
-        max_gen_len: int = 4097,
+        max_gen_len: int = None,
         temperature: float = 0.6,
         top_p: float = 0.9,
     ) -> Dict[str, str]:
@@ -342,8 +352,13 @@ class SPIRESEngine(KnowledgeEngine):
         prompt += "===\n\nTerms:"
         prompt += "; ".join(terms)
         prompt += "===\n\n"
-        payload = self.client.complete(prompt, show_prompt, max_gen_len,
-                                       temperature, top_p)
+        if max_gen_len is None:
+            payload = self.client.complete(prompt, show_prompt, 
+                                           temperature=temperature, top_p=top_p)
+        else:
+            payload = self.client.complete(prompt, show_prompt, 
+                                           max_gen_len=max_gen_len,
+                                           temperature=temperature, top_p=top_p)
         # outer parse
         best_results = []
         for sep in ["\n", "; "]:
@@ -417,7 +432,7 @@ class SPIRESEngine(KnowledgeEngine):
         class_def: ClassDefinition = None,
         an_object: OBJECT = None,
         show_prompt: bool = False,
-        max_gen_len: int = 4097,
+        max_gen_len: int = None,
         temperature: float = 0.6,
         top_p: float = 0.9,
     ) -> str:
@@ -429,8 +444,13 @@ class SPIRESEngine(KnowledgeEngine):
         """
         prompt = self.get_completion_prompt(class_def, text, an_object=an_object)
         self.last_prompt = prompt
-        payload = self.client.complete(prompt, show_prompt, max_gen_len,
-                                       temperature, top_p)
+        if max_gen_len is None:
+            payload = self.client.complete(prompt, show_prompt, 
+                                           temperature=temperature, top_p=top_p)
+        else:
+            payload = self.client.complete(prompt, show_prompt,
+                                           max_gen_len=max_gen_len,
+                                           temperature=temperature, top_p=top_p)
         return payload
 
     def get_completion_prompt(

@@ -14,6 +14,8 @@ from torch import Tensor, device
 
 import numpy as np
 
+LLAMA2_MAX_LEN
+
 # This module is for interacting directly with a self-hosted Llama 2 model,
 # together with a sentence embedding model.
 # Alternatively, one can interact with Llama 2 via HuggingFace; see the
@@ -66,7 +68,7 @@ class Llama2Client:
 
     def complete(self, prompt : str,
                  show_prompt : bool = False,
-                 max_gen_len: int = 4097,
+                 max_gen_len: int = LLAMA2_MAX_LEN,
                  temperature: float = 0.6,
                  top_p: float = 0.9):
         """Complete text using a Llama 2 model."""
@@ -104,7 +106,7 @@ class Llama2Client:
 
     def chat_completion(self, user_prompt: str, system_prompt: str = None,
                         show_prompt : bool = False,
-                        max_gen_len: int = 4097,
+                        max_gen_len: int = LLAMA2_MAX_LEN,
                         temperature: float = 0.2,
                         top_p: float = 0.9):
         """Chat to a Llama 2 model."""

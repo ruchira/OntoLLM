@@ -198,22 +198,22 @@ show_prompt_option = click.option(
     help="If set, show all prompts passed to model through an API. Use with verbose setting.",
 )
 max_gen_len_option = click.option(
-        "--max-gen-len",
-        default=4097,
-        type=click.INT,
-        help="Maximum length of generated sequences. Default is 4097.",
+    "--max-gen-len",
+    default=16000,
+    type=click.INT,
+    help="Maximum length of generated sequences. Default is 16000.",
 )
 temperature_option = click.option(
-        "--temperature",
-        default=0.6,
-        type=click.FLOAT,
-        help="The temperature value for controlling randomness in generation.  Default is 0.6",
+    "--temperature",
+    default=0.6,
+    type=click.FLOAT,
+    help="The temperature value for controlling randomness in generation.  Default is 0.6",
 )
 top_p_option = click.option(
-        "--top-p",
-        default=0.9,
-        type=click.FLOAT,
-        help="The top p sampling parameter for controlling diversity in generation. Default is 0.9",
+    "--top-p",
+    default=0.9,
+    type=click.FLOAT,
+    help="The top p sampling parameter for controlling diversity in generation. Default is 0.9",
 )
 
 
@@ -431,7 +431,8 @@ def iteratively_generate_extract(
     max_iterations,
     clear,
     ontology,
-    show_prompt,i,
+    show_prompt,
+    i,
     max_gen_len=max_gen_len,
     temperature=temperature,
     top_p=top_p,
@@ -591,7 +592,7 @@ def pubmed_annotate(
         logging.debug(f"Input text: {text}")
         results = ke.extract_from_text(text=text, show_prompt=show_prompt,
                                        max_gen_len=max_gen_len,
-                                       temperature=temperature, 
+                                       temperature=temperature,
                                        top_p=top_p)
         write_extraction(results, output, output_format, ke)
 
@@ -608,7 +609,7 @@ def pubmed_annotate(
 @top_p_option
 @click.option("--auto-prefix", default="AUTO", help="Prefix to use for auto-generated classes.")
 @click.argument("article")
-def wikipedia_extract(model, article, template, output, output_format, 
+def wikipedia_extract(model, article, template, output, output_format,
                       show_prompt, max_gen_len, temperature, top_p, **kwargs):
     """Extract knowledge from a Wikipedia page."""
     if not model:
@@ -635,9 +636,9 @@ def wikipedia_extract(model, article, template, output, output_format,
 
     logging.debug(f"Input text: {text}")
     results = ke.extract_from_text(text=text, show_prompt=show_prompt,
-                                    max_gen_len=max_gen_len,
-                                    temperature=temperature,
-                                    top_p=top_p)
+                                   max_gen_len=max_gen_len,
+                                   temperature=temperature,
+                                   top_p=top_p)
     write_extraction(results, output, output_format, ke)
 
 
@@ -658,8 +659,8 @@ def wikipedia_extract(model, article, template, output, output_format,
     help="Keyword to search for (e.g. --keyword therapy). Also obtained from schema",
 )
 @click.argument("topic")
-def wikipedia_search(model, topic, keyword, template, output, output_format, 
-                     show_prompt, max_gen_len, temperature, top_p,  **kwargs):
+def wikipedia_search(model, topic, keyword, template, output, output_format,
+                     show_prompt, max_gen_len, temperature, top_p, **kwargs):
     """Extract knowledge from a Wikipedia page."""
     if not model:
         model = DEFAULT_MODEL
@@ -716,7 +717,7 @@ def wikipedia_search(model, topic, keyword, template, output, output_format,
 )
 @click.argument("term_tokens", nargs=-1)
 def search_and_extract(
-    model, term_tokens, keyword, template, output, output_format, show_prompt, 
+    model, term_tokens, keyword, template, output, output_format, show_prompt,
     max_gen_len, temperature, top_p,
     **kwargs
 ):
@@ -751,10 +752,10 @@ def search_and_extract(
     logging.info(f"PMID={pmid}")
     text = pmc.text(pmid)
     logging.info(f"Input text: {text}")
-    results = ke.extract_from_text(text=text, show_prompt=show_prompt, 
-                                    max_gen_len=max_gen_len,
-                                    temperature=temperature,
-                                    top_p=top_p)
+    results = ke.extract_from_text(text=text, show_prompt=show_prompt,
+                                   max_gen_len=max_gen_len,
+                                   temperature=temperature,
+                                   top_p=top_p)
     write_extraction(results, output, output_format)
 
 
@@ -769,7 +770,7 @@ def search_and_extract(
 @temperature_option
 @top_p_option
 @click.argument("url")
-def web_extract(model, template, url, output, output_format, show_prompt, 
+def web_extract(model, template, url, output, output_format, show_prompt,
                 max_gen_len, temperature, top_p, **kwargs):
     """Extract knowledge from web page."""
     logging.info(f"Creating for {template}")
@@ -818,7 +819,7 @@ def web_extract(model, template, url, output, output_format, show_prompt,
 @top_p_option
 @click.argument("url")
 def recipe_extract(
-    model, url, recipes_urls_file, dictionary, output, output_format, 
+    model, url, recipes_urls_file, dictionary, output, output_format,
     show_prompt, max_gen_len, temperature, top_p, **kwargs
 ):
     """Extract from recipe on the web."""
@@ -929,7 +930,7 @@ def synonyms(model, term, context, output, output_format, **kwargs):
         selectmodel = get_model_by_name(model)
         model_source = selectmodel["provider"]
 
-        # TODO Make SynonymEngine work without OpenAI, and change the 
+        # TODO Make SynonymEngine work without OpenAI, and change the
         # model_source here
         if model_source != "OpenAI":
             raise NotImplementedError("Model not yet supported for this function.")
@@ -1065,7 +1066,7 @@ def enrichment(
         selectmodel = get_model_by_name(model)
         model_source = selectmodel["provider"]
 
-        # TODO Make EnrichmentEngine work without OpenAI, and change the 
+        # TODO Make EnrichmentEngine work without OpenAI, and change the
         # model_source here
         if model_source != "OpenAI":
             raise NotImplementedError(
@@ -1527,7 +1528,7 @@ def eval_enrichment(genes, input_file, number_to_drop, annotations_path, model, 
         selectmodel = get_model_by_name(model)
         model_source = selectmodel["provider"]
 
-        # TODO Make EnrichmentEngine work without OpenAI, and change the 
+        # TODO Make EnrichmentEngine work without OpenAI, and change the
         # model_source here
         if model_source != "OpenAI":
             raise NotImplementedError(
@@ -1601,7 +1602,7 @@ def fill(model, template, object: str, examples, output, output_format,
     selectmodel = get_model_by_name(model)
     model_source = selectmodel["provider"]
 
-    # TODO Make SPIRESEngine work without OpenAI, and change the model_source 
+    # TODO Make SPIRESEngine work without OpenAI, and change the model_source
     # here
     if model_source == "OpenAI":
         ke = SPIRESEngine(template=template, **kwargs)
@@ -1614,7 +1615,7 @@ def fill(model, template, object: str, examples, output, output_format,
     logging.info(f"Loading {examples}")
     examples = yaml.safe_load(examples)
     logging.debug(f"Input object: {object}")
-    results = ke.generalize(an_object=an_object, examples=examples, 
+    results = ke.generalize(an_object=an_object, examples=examples,
                             show_prompt=show_prompt,
                             max_gen_len=max_gen_len,
                             temperature=temperature,
@@ -1632,7 +1633,7 @@ def fill(model, template, object: str, examples, output, output_format,
 @temperature_option
 @top_p_option
 @click.argument("input")
-def complete(model, input, output, output_format, show_prompt, 
+def complete(model, input, output, output_format, show_prompt,
              max_gen_len, temperature, top_p, **kwargs):
     """Prompt completion."""
     if not model:

@@ -253,7 +253,7 @@ class EnrichmentEngine(KnowledgeEngine):
             prompt_length = len(self.encoding.encode(prompt)) + 10
         else:
             prompt_length = 100  # Arbitrary length
-        max_len_total = 4097
+        max_len_total = self.client.max_seq_len
         max_len = max_len_total - self.completion_length
         logging.info(
             f"Prompt [{truncation_factor}] Toks: {prompt_length} / {max_len} Str={len(prompt)}"
