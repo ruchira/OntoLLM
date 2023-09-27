@@ -97,7 +97,7 @@ class Llama2Client:
         if len(responses) > 0:
             payload = responses[0]['generation']
             logger.info(f"Storing paylod of len: {len(payload)}")
-            cur.execute("INSERT INTO cache (prompt, payload) VALUES (:user_prompt, NULL, :payload)",
+            cur.execute("INSERT INTO cache (user_prompt, system_prompt, payload) VALUES (:user_prompt, NULL, :payload)",
                         {"user_prompt": prompt, "payload": payload})
             cur.connection.commit()
             return payload
