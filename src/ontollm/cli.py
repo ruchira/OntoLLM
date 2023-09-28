@@ -1647,7 +1647,8 @@ def complete(model, input, output, output_format, show_prompt,
     # TODO: Check that we can get rid of OpenAI here
     if model_source == "OpenAI":
         c = OpenAIClient(model=model_name)
-        results = c.complete(text, show_prompt, max_gen_len, temperature, top_p)
+        results = c.complete(prompt=text, show_prompt=show_prompt,
+                max_gen_len=max_gen_len, temperature=temperature, top_p=top_p)
 
     elif model_source == "GPT4All":
         c = set_up_gpt4all_model(modelname=model_name)
