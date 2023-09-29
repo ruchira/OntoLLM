@@ -6,7 +6,7 @@ As explained in the [README](README.md), OntoLLM is a derivative of OntoGPT, but
 
 Date of the last upstream commit checked:
 
-September 25, 2023, upstream commit 8592321 (skipped).
+September 28, 2023, upstream commit 7ed1310 (skipped).
 
 ## Individual commits
 
