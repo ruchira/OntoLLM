@@ -19,6 +19,7 @@ from oaklib.datamodels.text_annotator import TextAnnotationConfiguration
 from oaklib.implementations import OntoPortalImplementationBase
 from oaklib.interfaces import MappingProviderInterface, TextAnnotatorInterface
 from oaklib.utilities.subsets.value_set_expander import ValueSetExpander
+from requests.exceptions import ConnectionError
 
 from ontollm import DEFAULT_MODEL
 from ontollm.clients import Llama2Client
@@ -407,29 +408,33 @@ class KnowledgeEngine(ABC):
         :param class_def:
         :return:
         """
-        if input_id.startswith("http://purl.bioontology.org/ontology"):
-            # TODO: this should be fixed upstream in OAK
-            logging.info(f"Normalizing BioPortal id {input_id}")
-            input_id = input_id.replace("http://purl.bioontology.org/ontology/", "").replace(
-                "/", ":"
-            )
-        if input_id.startswith("http://id.nlm.nih.gov/mesh/"):
-            # TODO: this should be fixed upstream in OAK
-            logging.info(f"Normalizing MESH id {input_id}")
-            input_id = input_id.replace("http://id.nlm.nih.gov/mesh/", "").replace("/", ":")
-        if input_id.startswith("drugbank:"):
-            input_id = input_id.replace("drugbank:", "DRUGBANK:")
-        yield input_id
-        if not class_def.id_prefixes:
+        try:
+            if input_id.startswith("http://purl.bioontology.org/ontology"):
+                # TODO: this should be fixed upstream in OAK
+                logging.info(f"Normalizing BioPortal id {input_id}")
+                input_id = input_id.replace("http://purl.bioontology.org/ontology/", "").replace(
+                    "/", ":"
+                )
+            if input_id.startswith("http://id.nlm.nih.gov/mesh/"):
+                # TODO: this should be fixed upstream in OAK
+                logging.info(f"Normalizing MESH id {input_id}")
+                input_id = input_id.replace("http://id.nlm.nih.gov/mesh/", "").replace("/", ":")
+            if input_id.startswith("drugbank:"):
+                input_id = input_id.replace("drugbank:", "DRUGBANK:")
+            yield input_id
+            if not class_def.id_prefixes:
+                return
+            if not self.mappers:
+                return
+            for mapper in self.mappers:
+                if isinstance(mapper, MappingProviderInterface):
+                    for mapping in mapper.sssom_mappings([input_id]):
+                        yield str(mapping.object_id)
+                else:
+                    raise ValueError(f"Unknown mapper type {mapper}")
+        except ConnectionError as e:
+            logging.error(f"Encountered error when normalizing {input_id}: {e}")
             return
-        if not self.mappers:
-            return
-        for mapper in self.mappers:
-            if isinstance(mapper, MappingProviderInterface):
-                for mapping in mapper.sssom_mappings([input_id]):
-                    yield str(mapping.object_id)
-            else:
-                raise ValueError(f"Unknown mapper type {mapper}")
 
     def groundings(self, text: str, class_def: ClassDefinition) -> Iterator[str]:
         """
