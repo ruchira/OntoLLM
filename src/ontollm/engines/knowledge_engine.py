@@ -19,7 +19,7 @@ from oaklib.datamodels.text_annotator import TextAnnotationConfiguration
 from oaklib.implementations import OntoPortalImplementationBase
 from oaklib.interfaces import MappingProviderInterface, TextAnnotatorInterface
 from oaklib.utilities.subsets.value_set_expander import ValueSetExpander
-from requests.exceptions import ConnectionError
+from requests.exceptions import ConnectionError, HTTPError, ProxyError
 
 from ontollm import DEFAULT_MODEL
 from ontollm.clients import Llama2Client
@@ -432,7 +432,7 @@ class KnowledgeEngine(ABC):
                         yield str(mapping.object_id)
                 else:
                     raise ValueError(f"Unknown mapper type {mapper}")
-        except ConnectionError as e:
+        except (ConnectionError, HTTPError, ProxyError) as e:
             logging.error(f"Encountered error when normalizing {input_id}: {e}")
             return
 
