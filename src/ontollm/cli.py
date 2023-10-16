@@ -1787,7 +1787,21 @@ def clinical_notes(
     model_source = selectmodel["provider"]
     model_name = selectmodel["alternative_names"][0]
 
+<<<<<<< HEAD:src/ontollm/cli.py
     if model_source == "GPT4All":
+||||||| parent of c4933ee1... Repair clinical note generation in CLI
+    if model_source == "OpenAI":
+        c = OpenAIClient(model=model_name)
+        results = c.complete(prompt, show_prompt)
+
+    elif model_source == "GPT4All":
+=======
+    if model_source == "OpenAI":
+        c = OpenAIClient(model=model_name)
+        results = c.complete(prompt=prompt, show_prompt=show_prompt)
+
+    elif model_source == "GPT4All":
+>>>>>>> c4933ee1... Repair clinical note generation in CLI:src/ontogpt/cli.py
         c = set_up_gpt4all_model(modelname=model_name)
         results = chain_gpt4all_model(model=c, prompt_text=prompt)
 
