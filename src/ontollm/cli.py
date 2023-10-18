@@ -695,7 +695,7 @@ def wikipedia_search(model, topic, keyword, template, output, output_format,
                                        max_gen_len=max_gen_len,
                                        temperature=temperature,
                                        top_p=top_p)
-        write_extraction(results, output, output_format)
+        write_extraction(results, output, output_format, ke)
         break
 
 
