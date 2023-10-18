@@ -621,7 +621,7 @@ def wikipedia_extract(model, article, template, output, output_format,
     # TODO Make SPIRESEngine work without OpenAI, and change the model_source
     # here
     if model_source == "OpenAI":
-        ke = SPIRESEngine(template, **kwargs)
+        ke = SPIRESEngine(template=template, model=model, **kwargs)
         if settings.cache_db:
             ke.client.cache_db_path = settings.cache_db
         if settings.skip_annotators:
@@ -669,7 +669,7 @@ def wikipedia_search(model, topic, keyword, template, output, output_format,
     model_source = selectmodel["provider"]
 
     if model_source == "OpenAI":
-        ke = SPIRESEngine(template, **kwargs)
+        ke = SPIRESEngine(template=template, model=model, **kwargs)
 
     elif model_source == "GPT4All":
         model_name = selectmodel["alternative_names"][0]
