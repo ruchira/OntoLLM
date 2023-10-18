@@ -781,7 +781,7 @@ def web_extract(model, template, url, output, output_format, show_prompt,
     model_source = selectmodel["provider"]
 
     if model_source == "OpenAI":
-        ke = SPIRESEngine(template, **kwargs)
+        ke = SPIRESEngine(template=template, model=model, **kwargs)
         if settings.cache_db:
             ke.client.cache_db_path = settings.cache_db
         if settings.skip_annotators:
@@ -799,7 +799,7 @@ def web_extract(model, template, url, output, output_format, show_prompt,
                                    max_gen_len=max_gen_len,
                                    temperature=temperature,
                                    top_p=top_p)
-    write_extraction(results, output, output_format)
+    write_extraction(results, output, output_format, ke)
 
 
 @main.command()
