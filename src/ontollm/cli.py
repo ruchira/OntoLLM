@@ -752,11 +752,16 @@ def search_and_extract(
     logging.info(f"PMID={pmid}")
     text = pmc.text(pmid)
     logging.info(f"Input text: {text}")
+<<<<<<<
+    results = ke.extract_from_text(text=text, show_prompt=show_prompt)
+    write_extraction(results, output, output_format, ke)
+=======
     results = ke.extract_from_text(text=text, show_prompt=show_prompt,
                                    max_gen_len=max_gen_len,
                                    temperature=temperature,
                                    top_p=top_p)
     write_extraction(results, output, output_format)
+>>>>>>>
 
 
 @main.command()
