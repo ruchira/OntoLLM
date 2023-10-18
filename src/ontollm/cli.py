@@ -394,7 +394,8 @@ def generate_extract(model, entity, template, output, output_format, show_prompt
         ke = GPT4AllEngine(template=template, model=model_name, **kwargs)
 
     logging.debug(f"Input entity: {entity}")
-    results = ke.generate_and_extract(entity, show_prompt,
+    results = ke.generate_and_extract(entity=entity, prompt_template=template,
+                                      show_prompt=show_prompt,
                                       max_gen_len=max_gen_len,
                                       temperature=temperature,
                                       top_p=top_p)
