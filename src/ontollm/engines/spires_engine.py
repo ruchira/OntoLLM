@@ -154,11 +154,13 @@ class SPIRESEngine(KnowledgeEngine):
         prompt = prompt_template.format(entity=entity)
         if self.client is not None:
             if max_gen_len is None:
-                payload = self.client.complete(prompt, show_prompt,
+                payload = self.client.complete(prompt=prompt, 
+                                           show_prompt=show_prompt,
                                            temperature=temperature,
                                            top_p=top_p)
             else:
-                payload = self.client.complete(prompt, show_prompt,
+                payload = self.client.complete(prompt=prompt, 
+                                           show_prompt=show_prompt,
                                            max_gen_len=max_gen_len,
                                            temperature=temperature,
                                            top_p=top_p)
@@ -187,12 +189,13 @@ class SPIRESEngine(KnowledgeEngine):
         iteration = 0
         if isinstance(cache_path, str):
             cache_path = Path(cache_path)
-        if cache_path.exists() and not clear:
-            db = yaml.safe_load(cache_path.open())
-            if "entities_in_queue" not in db:
-                db["entities_in_queue"] = []
-        else:
-            db = {"processed_entities": [], "entities_in_queue": [], "results": []}
+        if cache_path:
+            if cache_path.exists() and not clear:
+                db = yaml.safe_load(cache_path.open())
+                if "entities_in_queue" not in db:
+                    db["entities_in_queue"] = []
+            else:
+                db = {"processed_entities": [], "entities_in_queue": [], "results": []}
         if entity not in db["processed_entities"]:
             db["entities_in_queue"].append(entity)
         if prompt_template is None:
