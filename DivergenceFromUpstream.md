@@ -6,7 +6,7 @@ As explained in the [README](README.md), OntoLLM is a derivative of OntoGPT, but
 
 Date of the last upstream commit checked:
 
-October 5, 2023, upstream commit bf0fb5e (skipped).
+October 19, 2023, upstream commit 63ba04a (skipped).
 
 ## Individual commits
 
@@ -118,3 +118,19 @@ Skipping 7838cce, it is a merge of 7ed1310 (above) and [96aa7e5](https://github.
 Skipping 4004f23, it is a merge of 7838cce (above) and [2894883](https://github.com/ruchira/OntoLLM/commit/2894883a58bfb07b64efcf1c9a3e39473cc24bd1), which we [have](https://github.com/ruchira/OntoLLM/commit/a2f03a8e0408fe3d1d470e5662a08550f447f803).
 
 Skipping bf0fb5e, it is a merge of 4004f23 (above) and [c950c2f](https://github.com/ruchira/OntoLLM/commit/c950c2f205b580157ac1e04f01e17eb8eaec5257), which we [have](https://github.com/ruchira/OntoLLM/commit/15ff0332e5af2e218094dba930cba3a4eacd6a9a).
+
+Skipping 779a8b5, it is a merge of bf0fb5e (above) and [7958b3c](https://github.com/ruchira/OntoLLM/commit/7958b3ce1fc060a6ad8eaeb62587ccb09945419a), which we [have](https://github.com/ruchira/OntoLLM/commit/6db09cfefd19d7f2039c50bf9b50a3238353d564).
+
+Skipping caf21e8, it is a merge of 779a8b5 (above) and [c4933ee](https://github.com/ruchira/OntoLLM/commit/c4933ee12f0f1bfec5929354733c9b2e616ee718), which we [have](https://github.com/ruchira/OntoLLM/commit/684a4eac1dc0fa5ae323edc412da5f9f5a45eafa).
+
+Skipping bbf9873, it is a merge of 779a8b5 (above) and caf21e8 (above).
+
+Skipping bc90974, it only pertains to OpenAI models.
+
+Skipping c35f3ef, it is a merge of bbf9873 (above) and [f121b33](https://github.com/ruchira/OntoLLM/commit/f121b33caf6f3b640c57571a816abfb790e5afbf), which we [have](https://github.com/ruchira/OntoLLM/commit/8c4bd1cf59417a33036dc9aadf9da48e04503d72).
+
+Skipping 40f2182, it is a merge of c35f3ef (above) and [b33e201](https://github.com/ruchira/OntoLLM/commit/b33e201ebf30a8b6e71aec4c373b62043bd6f8ee), which we [have](https://github.com/ruchira/OntoLLM/commit/8a3ca8e5439974dfdd6f3151435cc7f274aac59e).
+
+Skipping 3f1202a, it is a merge of 40f2182 (above) and [7c4d424](https://github.com/ruchira/OntoLLM/commit/7c4d42498f87b8d755382bd76e4e6ab9466bf08d), which we [have](https://github.com/ruchira/OntoLLM/commit/e3b4173374ae9ff0735c5c8f201372c837d16d12).
+
+Skipping 63ba04a, it is a merge of 3f1202a (above) and [c8d04cf](https://github.com/ruchira/OntoLLM/commit/c8d04cf71ed57e1ce8d6a766bd681cdff6db2d35), which we [have](https://github.com/ruchira/OntoLLM/commit/2c41e8cbed9408586ea6a1e692df84cb1fd358cc).
