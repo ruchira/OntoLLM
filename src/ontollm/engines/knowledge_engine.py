@@ -45,7 +45,7 @@ ANNOTATION_KEY_EXAMPLES = "prompt.examples"
 # TODO: introspect
 # TODO: move this to its own module
 DATAMODELS = [
-    "bioloigical_process.BiologicalProcess",
+    "biological_process.BiologicalProcess",
     "biotic_interaction.BioticInteraction",
     "cell_type.CellTypeDocument",
     "ctd.ChemicalToDiseaseDocument",
