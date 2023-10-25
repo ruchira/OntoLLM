@@ -98,7 +98,7 @@ class KnowledgeEngine(ABC):
     """LinkML SchemaView over the template.
     This is derived from the template and does not need to be set manually."""
 
-    model: MODEL_NAME = None
+    model: str = None
     """Language Model. This may be overridden in subclasses."""
 
     # annotator: TextAnnotatorInterface = None
@@ -580,5 +580,13 @@ class KnowledgeEngine(ABC):
         return resultset[0]
 
     def set_up_client(self):
+        # TODO: Change to HFHubClient
         self.client = Llama2Client(model=self.model)
+        # TODO: After change to HFHubClient, modify this code from upstream as
+        # appropriate, if necessary
+        # try:
+        #     self.encoding = tiktoken.encoding_for_model(self.client.model)
+        # except KeyError:
+        #     self.encoding = tiktoken.encoding_for_model(DEFAULT_MODEL)
+        #     logger.error(f"Could not find encoding for model {self.client.model}")
         self.tokenizer = self.client.get_tokenizer(model=self.model)
