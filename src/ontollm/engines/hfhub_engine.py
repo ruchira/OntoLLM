@@ -60,6 +60,8 @@ class HFHubEngine(KnowledgeEngine):
     """The name of the HF Hub model as per its repo, e.g., gpt2 or databricks/dolly-v2-3b"""
 
     loaded_model = None
+    # TODO: Replace LangChain by guidance
+    # https://github.com/guidance-ai/guidance
     """Langchain loaded model object."""
 
     def __post_init__(self, local_model):

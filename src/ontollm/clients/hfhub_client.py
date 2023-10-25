@@ -1,7 +1,7 @@
 """HuggingFace Hub Client."""
 import logging
 from dataclasses import dataclass
-# TODO: Replace langchain, perhaps with llm
+# TODO: Replace langchain with guidance https://github.com/guidance-ai/guidance
 from langchain import HuggingFaceHub, LLMChain, PromptTemplate
 import numpy as np
 from oaklib.utilities.apikey_manager import get_apikey_value
