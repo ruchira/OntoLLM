@@ -13,7 +13,7 @@ def main():
 
     # Safety check
     raw_url = "https://huggingface.co/" + args.repo_id + "/tree/" + args.revision
-    if not is_safe_url(raw_url):
+    if not is_safe_url(raw_url, allowed_hosts={"huggingface.co"}):
         _ = sys.stderr.write(
                 "Could not verify safety of the proposed url; exiting...\n")
         sys.exit(1)
