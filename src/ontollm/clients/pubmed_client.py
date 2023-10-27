@@ -8,6 +8,8 @@ from urllib import parse
 import inflection
 import requests
 from bs4 import BeautifulSoup
+# TODO: Instead of querying the PubMed endpoint, use a self-hosted database of
+# some subset of PubMed 
 from oaklib.utilities.apikey_manager import get_apikey_value
 
 PMID = str
