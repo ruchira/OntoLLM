@@ -4,6 +4,9 @@ from dataclasses import dataclass
 import requests
 import wikipediaapi
 
+# TODO: Make this work with a snapshot of 
+# enwiki-latest-pages-articles-multistream.xml instead of making requests
+
 
 @dataclass
 class WikipediaClient:
