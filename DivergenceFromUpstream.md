@@ -6,7 +6,7 @@ As explained in the [README](README.md), OntoLLM is a derivative of OntoGPT, but
 
 Date of the last upstream commit checked:
 
-October 24, 2023, upstream commit 83d8807 (skipped).
+October 25, 2023, upstream commit 2e35f5c (skipped).
 
 ## Individual commits
 
@@ -140,3 +140,5 @@ Skipping 920932a, it is a merge of 63ba04a (above) and [54a7651](https://github.
 Skipping ee925c2, it is a merge of 920932a (above) and [874a4d9](https://github.com/ruchira/OntoLLM/commit/874a4d9db811e1c938d54d652a425939c3c7a35e), which we [have](https://github.com/ruchira/OntoLLM/commit/c3bac7ecdc1c2fde79c3df6c711f9b9f4f1c02fa).
 
 Skipping 83d8807, it is a merge of ee925c2 (above) and [7d72440](https://github.com/ruchira/OntoLLM/commit/7d72440ad20bf929900635f42cef43feba3ee833), which we [have](https://github.com/ruchira/OntoLLM/commit/c2c5c74a82f8b4b9dd00d96e4783b86579c68ecf).
+
+Skipping 2e35f5c, it is a merge of 83d8807 (above) and [cc6e9bd](https://github.com/ruchira/OntoLLM/commit/cc6e9bd222c6d6a33011c3a5c2da3c88c097269b), which we [have](https://github.com/ruchira/OntoLLM/commit/678a4dfbbd373d10b6a6bfab633a0d5ad4b189fd).
